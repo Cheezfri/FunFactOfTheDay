@@ -5,6 +5,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.funfactoftheday.database.models.FactModel
+import com.example.funfactoftheday.databinding.FragmentHomePageBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,6 +21,9 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class HomePageFragment : Fragment() {
+
+    private lateinit var binding:FragmentHomePageBinding
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -29,12 +36,14 @@ class HomePageFragment : Fragment() {
         }
     }
 
+    //method used to inflate layout
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_home_page, container, false)
+        binding = FragmentHomePageBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     companion object {
@@ -55,5 +64,21 @@ class HomePageFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    //TODO Figure out Databinding in Fragment and make sure the RV adapter gets attached
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        var testFacts = mutableListOf<FactModel>(
+            FactModel("123", "The World Is Flat", true),
+            FactModel("234", "Pee is stored in the balls", true),
+            FactModel("345", "Dabbington City Shall We?", true)
+        )
+        val adapter = FactsAdapter(testFacts)
+//        binding.btnGenerateFunFact.visibility = View.GONE
+        binding.rvFactsHomePage.adapter = adapter
+        binding.rvFactsHomePage.layoutManager = LinearLayoutManager(requireContext())
+
     }
 }
