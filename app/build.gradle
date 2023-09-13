@@ -3,6 +3,9 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+//new
+apply plugin: 'kotlin-kapt'
+
 android {
     namespace 'com.example.funfactoftheday'
     compileSdk 34
@@ -51,8 +54,15 @@ dependencies {
     //val room_version = "2.5.2"
 
     implementation("androidx.room:room-runtime:2.5.2")
+
+    //new
+    kapt "androidx.room:room-compiler:2.5.2"
+
     annotationProcessor("androidx.room:room-compiler:2.5.2")
 
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:2.5.2")
+
+    //timber
+    implementation 'com.jakewharton.timber:timber:5.0.1'
 }

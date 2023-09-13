@@ -5,7 +5,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "category_table")
 data class CategoryModel (
-    @PrimaryKey
-    val categoryId: String,
+    @PrimaryKey(autoGenerate = false)
     val categoryName: String
 )

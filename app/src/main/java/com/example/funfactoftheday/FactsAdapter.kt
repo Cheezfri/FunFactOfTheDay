@@ -1,7 +1,6 @@
 package com.example.funfactoftheday
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.funfactoftheday.database.models.FactModel
@@ -19,7 +18,7 @@ class FactsAdapter (
 
     class FactsViewHolder(private val itemBinding: FactBinding):RecyclerView.ViewHolder(itemBinding.root){
         fun bind(fact:FactModel){
-            itemBinding.tvFactSentence.text = fact.factSentence
+            itemBinding.tvFactSentence.text = fact.factName
             itemBinding.cbFavorite.isChecked = fact.isFavorite
         }
     }

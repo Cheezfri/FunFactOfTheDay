@@ -5,8 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "fact_table")
 data class FactModel (
-    @PrimaryKey
-    val factId: String,
-    val factSentence: String,
+    @PrimaryKey(autoGenerate = false)
+    val factName: String,
     val isFavorite: Boolean = false,
 )
