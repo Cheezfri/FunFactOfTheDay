@@ -6,5 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "category_table")
 data class CategoryModel (
     @PrimaryKey(autoGenerate = false)
-    val categoryName: String
+    val categoryName: String,
+    val isFavorite: Boolean = false
 )

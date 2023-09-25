@@ -2,13 +2,15 @@ package com.example.funfactoftheday
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.lifecycle.LiveData
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
 
-class FactsAdapter (
-    private val factModels: MutableList<FactModel>
-): RecyclerView.Adapter<FactsAdapter.FactsViewHolder>() {
+//TODO: Create empty constructor
+class FactsAdapter : ListAdapter<FactModel, FactsAdapter.FactsViewHolder>(FactsComparator()) {
 
     //inflates layout
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactsViewHolder {
@@ -16,16 +18,9 @@ class FactsAdapter (
         return FactsViewHolder(itemBinding)
     }
 
-    class FactsViewHolder(private val itemBinding: FactBinding):RecyclerView.ViewHolder(itemBinding.root){
-        fun bind(fact:FactModel){
-            itemBinding.tvFactSentence.text = fact.factName
-            itemBinding.cbFavorite.isChecked = fact.isFavorite
-        }
-    }
-
     override fun onBindViewHolder(holder: FactsViewHolder, position: Int) {
-        val factModel: FactModel = factModels[position]
-        holder.bind(factModel)
+        val current = getItem(position)
+        holder.bind(current)
 //        holder.itemView.apply {
 //            tvFactSentence.text = factModels[position].sentence
 //            cbFavorite.isChecked = factModels[position].isFavorite
@@ -33,8 +28,22 @@ class FactsAdapter (
 
     }
 
-    override fun getItemCount(): Int {
-        return factModels.size
+    class FactsViewHolder(private val itemBinding: FactBinding):RecyclerView.ViewHolder(itemBinding.root){
+        fun bind(fact:FactModel){
+            itemBinding.tvFactName.text = fact.factName
+            itemBinding.cbFavorite.isChecked = fact.isFavorite
+        }
+    }
+
+    class FactsComparator : DiffUtil.ItemCallback<FactModel>(){
+        override fun areItemsTheSame(oldItem: FactModel, newItem: FactModel): Boolean {
+            return oldItem === newItem
+        }
+
+        override fun areContentsTheSame(oldItem: FactModel, newItem: FactModel): Boolean {
+            //TODO: check for isfavorite is true also
+            return oldItem.factName == newItem.factName
+        }
     }
 
 }

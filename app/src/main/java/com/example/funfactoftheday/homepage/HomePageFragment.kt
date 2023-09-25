@@ -1,13 +1,20 @@
-package com.example.funfactoftheday
+package com.example.funfactoftheday.homepage
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.map
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.example.funfactoftheday.FactApplication
+import com.example.funfactoftheday.FactsAdapter
 import com.example.funfactoftheday.database.AppDao
 import com.example.funfactoftheday.database.AppDatabase
 import com.example.funfactoftheday.database.models.CategoryModel
@@ -35,6 +42,10 @@ class HomePageFragment : Fragment() {
     private lateinit var sportsCategory:String
     private lateinit var flatFact:String
 
+    private val homePageViewModel: HomePageViewModel by viewModels {
+        HomePageViewModel.HomePageViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -49,10 +60,12 @@ class HomePageFragment : Fragment() {
 
     //method used to inflate layout
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
+
         binding = FragmentHomePageBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -77,54 +90,43 @@ class HomePageFragment : Fragment() {
             }
     }
 
-    //TODO Figure out Databinding in Fragment and make sure the RV adapter gets attached
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         Timber.plant(Timber.DebugTree())
 
-        appDao = AppDatabase.getInstance(requireContext()).appDao
-
-        val testFacts = mutableListOf(
-            FactModel( "The World Is Flat", true),
-            FactModel( "Lebron James is a goat", true),
-            FactModel( "Ryan Gosling to HOT", true),
-            FactModel( "Lebron James is 3 Feet and 2 Inches", true),
-            FactModel( "Dabbington City Shall We?", true)
-        )
-
-        val testCategories = mutableListOf(
-            CategoryModel("Sports"),
-            CategoryModel("Science"),
-            CategoryModel("Entertainment")
-        )
-
-        val factCategoryRelations = mutableListOf(
-            CategoryModelCrossRef("The World Is Flat", "Science"),
-            CategoryModelCrossRef("Lebron James is a goat", "Sports"),
-            CategoryModelCrossRef("Lebron James is a goat", "Entertainment"),
-            CategoryModelCrossRef("Ryan Gosling to HOT", "Entertainment"),
-            CategoryModelCrossRef("Lebron James is 3 Feet and 2 Inches", "Sports"),
-            CategoryModelCrossRef("Dabbington City Shall We", "Entertainment")
-        )
-
-        lifecycleScope.launch {
-            testFacts.forEach{appDao.insertFact(it)}
-            testCategories.forEach{appDao.insertCategory(it)}
-            factCategoryRelations.forEach{appDao.insertCategoryModelCrossRef(it)}
-
-            lebronFact = appDao.getCategoriesOfFacts("Lebron James is a goat").toString()
-            sportsCategory = appDao.getFactsOfCategories("Sports").toString()
-            flatFact = appDao.getCategoriesOfFacts("The World Is Flat").toString()
-
-            Timber.e("LebronFact: $lebronFact !!! sportsCategory: $sportsCategory !!! flatFact: $flatFact")
-//            Toast.makeText(requireContext(), "LebronFact: $lebronFact !!! sportsCategory: $sportsCategory !!! flatFact: $flatFact", Toast.LENGTH_LONG).show()
-        }
-
-        val adapter = FactsAdapter(testFacts)
-
+        val adapter = FactsAdapter()
         binding.rvFactsHomePage.adapter = adapter
         binding.rvFactsHomePage.layoutManager = LinearLayoutManager(requireContext())
 
+        homePageViewModel.allFacts.observe(viewLifecycleOwner){ facts ->
+            facts.let {
+                adapter.submitList(it as MutableList<FactModel>?)
+            }
+        }
+
+        binding.btnGenerateFunFact.setOnClickListener {
+            val fact = FactModel(binding.etFunFactInput.text.toString())
+            Timber.e("New Fact: ${fact.isFavorite}")
+            homePageViewModel.insert(fact)
+//            Timber.e("New Fact: ${homePageViewModel.allFacts}")
+        }
+
+
+
+//        appDao = AppDatabase.getDatabase(requireContext()).appDao
+//
+//        lifecycleScope.launch {
+//            lebronFact = appDao.getCategoriesOfFacts("Lebron James is a goat").toString()
+//            sportsCategory = appDao.getFactsOfCategories("Sports").toString()
+//            flatFact = appDao.getCategoriesOfFacts("The World Is Flat").toString()
+//
+//            Timber.e("LebronFact: $lebronFact !!! sportsCategory: $sportsCategory !!! flatFact: $flatFact")
+//
+////            val adapter = FactsAdapter(appDao.getAllFacts())
+//
+//            binding.rvFactsHomePage.adapter = adapter
+//            binding.rvFactsHomePage.layoutManager = LinearLayoutManager(requireContext())
+////            Toast.makeText(requireContext(), "LebronFact: $lebronFact !!! sportsCategory: $sportsCategory !!! flatFact: $flatFact", Toast.LENGTH_LONG).show()
+        }
+
     }
-}

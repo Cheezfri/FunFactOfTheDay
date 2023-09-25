@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class FactModel (
     @PrimaryKey(autoGenerate = false)
     val factName: String,
-    val isFavorite: Boolean = false,
+    val isFavorite: Boolean = false
 )

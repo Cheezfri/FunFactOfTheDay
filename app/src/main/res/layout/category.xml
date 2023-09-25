@@ -7,10 +7,10 @@
     android:paddingEnd="8dp">
 
     <TextView
-        android:id="@+id/tvFactName"
+        android:id="@+id/tvCategoryName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Fun Fact"
+        android:text="Category Name"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -20,9 +20,9 @@
         android:id="@+id/cbFavorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@+id/tvFactName"
+        app:layout_constraintBottom_toBottomOf="@+id/tvCategoryName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvFactName"
+        app:layout_constraintTop_toTopOf="@+id/tvCategoryName"
         android:button="@android:drawable/btn_star" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

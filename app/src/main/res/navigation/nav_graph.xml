@@ -12,12 +12,12 @@
         tools:layout="@layout/activity_main" />
     <fragment
         android:id="@+id/categoryFragment"
-        android:name="com.example.funfactoftheday.CategoryFragment"
+        android:name="com.example.funfactoftheday.categories.CategoriesFragment"
         android:label="fragment_category"
-        tools:layout="@layout/fragment_category" />
+        tools:layout="@layout/fragment_categories" />
     <fragment
         android:id="@+id/favoriteFactsFragment"
-        android:name="com.example.funfactoftheday.FavoriteFactsFragment"
+        android:name="com.example.funfactoftheday.favoritefacts.FavoriteFactsFragment"
         android:label="fragment_favorite_facts"
         tools:layout="@layout/fragment_favorite_facts" />
 </navigation>
