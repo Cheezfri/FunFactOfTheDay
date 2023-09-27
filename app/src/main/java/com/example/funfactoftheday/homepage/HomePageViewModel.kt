@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.example.funfactoftheday.database.AppRepository
 import com.example.funfactoftheday.database.models.FactModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Keep
 class HomePageViewModel (private val appRepository: AppRepository): ViewModel() {
@@ -13,6 +14,7 @@ class HomePageViewModel (private val appRepository: AppRepository): ViewModel() 
 
     fun insert(factModel: FactModel) = viewModelScope.launch {
         appRepository.insert(factModel)
+        Timber.e("Inserted ${factModel.factName}")
     }
 
     class HomePageViewModelFactory(private val repository: AppRepository): ViewModelProvider.Factory{

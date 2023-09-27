@@ -20,6 +20,7 @@ import com.example.funfactoftheday.database.AppDatabase
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.database.reletions.CategoryModelCrossRef
+import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentHomePageBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -34,7 +35,8 @@ private const val ARG_PARAM2 = "param2"
  * Use the [HomePageFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class HomePageFragment : Fragment() {
+//TODO: Create Floating Action Bar to add facts
+class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
     private lateinit var binding:FragmentHomePageBinding
     private lateinit var appDao:AppDao
@@ -44,6 +46,15 @@ class HomePageFragment : Fragment() {
 
     private val homePageViewModel: HomePageViewModel by viewModels {
         HomePageViewModel.HomePageViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
+    override fun onItemClick(itemBinding: FactBinding) {
+        Timber.e("")
+        itemBinding.cbFavorite.setOnClickListener{
+            val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
+            homePageViewModel.insert(fact)
+            Timber.e("on click working")
+        }
     }
 
     // TODO: Rename and change types of parameters
@@ -93,20 +104,23 @@ class HomePageFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.plant(Timber.DebugTree())
+        Timber.e("OnViewCreated")
 
-        val adapter = FactsAdapter()
+
+
+        val adapter = FactsAdapter(this)
         binding.rvFactsHomePage.adapter = adapter
         binding.rvFactsHomePage.layoutManager = LinearLayoutManager(requireContext())
 
         homePageViewModel.allFacts.observe(viewLifecycleOwner){ facts ->
             facts.let {
                 adapter.submitList(it as MutableList<FactModel>?)
+                Timber.e("List Submitted")
             }
         }
 
         binding.btnGenerateFunFact.setOnClickListener {
             val fact = FactModel(binding.etFunFactInput.text.toString())
-            Timber.e("New Fact: ${fact.isFavorite}")
             homePageViewModel.insert(fact)
 //            Timber.e("New Fact: ${homePageViewModel.allFacts}")
         }

@@ -52,4 +52,9 @@ interface AppDao {
     @Transaction
     @Query("SELECT * FROM fact_table WHERE factName = :factName")
     fun getCategoriesOfFacts(factName: String): Flow<List<FactsWithCategories>>
+
+//    @Transaction
+//    suspend fun favoriteAFact(fact: FactModel){
+//        val factToChange =
+//    }
 }

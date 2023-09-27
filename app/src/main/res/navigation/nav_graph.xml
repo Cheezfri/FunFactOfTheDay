@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/mainActivity">
+    app:startDestination="@+id/homePageFragment">
 
-    <activity
-        android:id="@+id/mainActivity"
-        android:name="com.example.funfactoftheday.MainActivity"
-        android:label="activity_main"
-        tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/homePageFragment"
+        android:name="com.example.funfactoftheday.homepage.HomePageFragment"
+        android:label="fragment_home_page"
+        tools:layout="@layout/fragment_home_page" />
     <fragment
         android:id="@+id/categoryFragment"
         android:name="com.example.funfactoftheday.categories.CategoriesFragment"
