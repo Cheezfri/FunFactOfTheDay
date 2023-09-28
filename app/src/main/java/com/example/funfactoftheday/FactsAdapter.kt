@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
+import timber.log.Timber
 
 //TODO: Turn Favorite button to an OnClickListener to toggle favorites
 class FactsAdapter(
@@ -37,6 +38,7 @@ class FactsAdapter(
             itemBinding.cbFavorite.isChecked = fact.isFavorite
             itemBinding.cbFavorite.setOnClickListener{
                 listener.onItemClick(itemBinding)
+                Timber.e("OnClick Working Adapter")
             }
         }
 

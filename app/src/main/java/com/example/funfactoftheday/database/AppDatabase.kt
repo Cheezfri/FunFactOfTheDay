@@ -10,6 +10,7 @@ import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.database.reletions.CategoryModelCrossRef
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @Database(
     entities = [
@@ -40,6 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     suspend fun populateDatabase(appDao: AppDao) {
         // Delete all content here
+        Timber.e("Database Populated")
         appDao.deleteAll()
 
         val testFacts = mutableListOf(

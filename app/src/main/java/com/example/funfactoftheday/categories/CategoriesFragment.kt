@@ -75,6 +75,12 @@ class CategoriesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        var test = 0
+        binding.cbTest.setOnClickListener{
+            test++
+            Timber.e("Clicked: $test")
+        }
+
 //        Timber.plant(Timber.DebugTree())
 //        appDao = AppDatabase.getDatabase(requireContext()).appDao
 //

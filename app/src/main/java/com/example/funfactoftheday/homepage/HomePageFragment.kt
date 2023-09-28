@@ -49,12 +49,9 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(itemBinding: FactBinding) {
-        Timber.e("")
-        itemBinding.cbFavorite.setOnClickListener{
             val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
             homePageViewModel.insert(fact)
-            Timber.e("on click working")
-        }
+            Timber.e("on click working Fragment")
     }
 
     // TODO: Rename and change types of parameters
