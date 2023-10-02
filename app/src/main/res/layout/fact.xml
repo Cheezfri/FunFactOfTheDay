@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/tvFactName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvFactName"
-        android:button="@android:drawable/btn_star" />
+        app:layout_constraintTop_toTopOf="@+id/tvFactName"/>
+<!--        android:button="@drawable/ic_baseline_favorite_24" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

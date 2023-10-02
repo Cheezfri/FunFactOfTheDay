@@ -6,23 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.map
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ListAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.FactsAdapter
-import com.example.funfactoftheday.database.AppDao
-import com.example.funfactoftheday.database.AppDatabase
-import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
-import com.example.funfactoftheday.database.reletions.CategoryModelCrossRef
 import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentHomePageBinding
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
@@ -39,10 +28,6 @@ private const val ARG_PARAM2 = "param2"
 class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
     private lateinit var binding:FragmentHomePageBinding
-    private lateinit var appDao:AppDao
-    private lateinit var lebronFact:String
-    private lateinit var sportsCategory:String
-    private lateinit var flatFact:String
 
     private val homePageViewModel: HomePageViewModel by viewModels {
         HomePageViewModel.HomePageViewModelFactory((context?.applicationContext as FactApplication).repository)
@@ -121,23 +106,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
             homePageViewModel.insert(fact)
 //            Timber.e("New Fact: ${homePageViewModel.allFacts}")
         }
-
-
-
-//        appDao = AppDatabase.getDatabase(requireContext()).appDao
-//
-//        lifecycleScope.launch {
-//            lebronFact = appDao.getCategoriesOfFacts("Lebron James is a goat").toString()
-//            sportsCategory = appDao.getFactsOfCategories("Sports").toString()
-//            flatFact = appDao.getCategoriesOfFacts("The World Is Flat").toString()
-//
-//            Timber.e("LebronFact: $lebronFact !!! sportsCategory: $sportsCategory !!! flatFact: $flatFact")
-//
-////            val adapter = FactsAdapter(appDao.getAllFacts())
-//
-//            binding.rvFactsHomePage.adapter = adapter
-//            binding.rvFactsHomePage.layoutManager = LinearLayoutManager(requireContext())
-////            Toast.makeText(requireContext(), "LebronFact: $lebronFact !!! sportsCategory: $sportsCategory !!! flatFact: $flatFact", Toast.LENGTH_LONG).show()
-        }
+    }
 
     }

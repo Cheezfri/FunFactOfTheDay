@@ -5,12 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.funfactoftheday.CategoryAdapter
+import com.example.funfactoftheday.FactApplication
+import com.example.funfactoftheday.FactsAdapter
 import com.example.funfactoftheday.database.AppDao
 import com.example.funfactoftheday.database.AppDatabase
 import com.example.funfactoftheday.database.models.CategoryModel
+import com.example.funfactoftheday.databinding.CategoryBinding
 import com.example.funfactoftheday.databinding.FragmentCategoriesBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -25,11 +29,18 @@ private const val ARG_PARAM2 = "param2"
  * Use the [CategoriesFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CategoriesFragment : Fragment() {
+class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
 
     private lateinit var binding:FragmentCategoriesBinding
-    private lateinit var appDao: AppDao
-    private lateinit var categories:List<CategoryModel>
+
+    private val categoriesViewModel: CategoriesViewModel by viewModels {
+        CategoriesViewModel.CategoriesViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
+    override fun onItemClick(itemBinding: CategoryBinding){
+        val category = CategoryModel(itemBinding.tvCategoryName.text as String, itemBinding.cbFavorite.isChecked)
+    }
+
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -75,25 +86,15 @@ class CategoriesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var test = 0
-        binding.cbTest.setOnClickListener{
-            test++
-            Timber.e("Clicked: $test")
+        val adapter = CategoryAdapter(this)
+        binding.rvCategoriesPage.adapter = adapter
+        binding.rvCategoriesPage.layoutManager = LinearLayoutManager(requireContext())
+
+        categoriesViewModel.allCategories.observe(viewLifecycleOwner){ categories ->
+            categories.let{
+                adapter.submitList(it as MutableList<CategoryModel>?)
+            }
         }
-
-//        Timber.plant(Timber.DebugTree())
-//        appDao = AppDatabase.getDatabase(requireContext()).appDao
-//
-//        lifecycleScope.launch{
-//            categories = appDao.getAllCategories()
-//
-//            val adapter = CategoryAdapter(categories.toMutableList())
-//
-//            binding.rvCategoriesPage.adapter = adapter
-//            binding.rvCategoriesPage.layoutManager = LinearLayoutManager(requireContext())
-//        }
-
-
 
     }
 

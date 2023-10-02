@@ -20,4 +20,9 @@
         android:name="com.example.funfactoftheday.favoritefacts.FavoriteFactsFragment"
         android:label="fragment_favorite_facts"
         tools:layout="@layout/fragment_favorite_facts" />
+    <fragment
+        android:id="@+id/SettingsFragment"
+        android:name="com.example.funfactoftheday.settings.SettingsFragment"
+        android:label="fragment_settings"
+        tools:layout="@layout/fragment_settings"/>
 </navigation>

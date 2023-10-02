@@ -5,7 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.funfactoftheday.FactApplication
+import com.example.funfactoftheday.FactsAdapter
+import com.example.funfactoftheday.database.models.FactModel
+import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentFavoriteFactsBinding
+import com.example.funfactoftheday.homepage.HomePageViewModel
+import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -17,9 +25,19 @@ private const val ARG_PARAM2 = "param2"
  * Use the [FavoriteFactsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FavoriteFactsFragment : Fragment() {
+class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
     private lateinit var binding:FragmentFavoriteFactsBinding
+
+    private val favoriteFactsViewModel: FavoriteFactsViewModel by viewModels {
+        FavoriteFactsViewModel.FavoriteFactsViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
+    override fun onItemClick(itemBinding: FactBinding) {
+        val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
+        favoriteFactsViewModel.insert(fact)
+        Timber.e("on click working Fragment")
+    }
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -62,5 +80,25 @@ class FavoriteFactsFragment : Fragment() {
                     putString(ARG_PARAM2, param2)
                 }
             }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val adapter = FactsAdapter(this)
+        binding.rvFavoriteFactsPage.adapter = adapter
+        binding.rvFavoriteFactsPage.layoutManager = LinearLayoutManager(requireContext())
+
+        favoriteFactsViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts ->
+            facts.let {
+                adapter.submitList(it as MutableList<FactModel>?)
+            }
+        }
+
+        binding.btnGenerateFunFact.setOnClickListener{
+            val fact = FactModel(binding.etFunFactInput.text.toString())
+            favoriteFactsViewModel.insert(fact)
+        }
+
     }
 }
