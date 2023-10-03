@@ -2,6 +2,8 @@ package com.example.funfactoftheday.database
 
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
+import com.example.funfactoftheday.database.models.CategoriesWithFacts
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
 import kotlinx.coroutines.flow.Flow
@@ -14,13 +16,20 @@ class AppRepository(private val appDao:AppDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun insert(factModel: FactModel){
+    suspend fun insertFact(factModel: FactModel){
         appDao.insertFact(factModel)
     }
 
-//    @WorkerThread
-//    suspend fun getCategoriesOfFacts(factModel: FactModel){
-//        appDao.getCategoriesOfFacts()
-//    }
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insertCategory(categoryModel: CategoryModel){
+        appDao.insertCategory(categoryModel)
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun getFactsOfCategories(categoryModel: CategoryModel): LiveData<List<CategoriesWithFacts>>{
+        return appDao.getFactsOfCategories(categoryModel.categoryName).asLiveData()
+    }
 
 }

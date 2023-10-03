@@ -5,12 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.funfactoftheday.CategoryAdapter
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.FactsAdapter
+import com.example.funfactoftheday.R
 import com.example.funfactoftheday.database.AppDao
 import com.example.funfactoftheday.database.AppDatabase
 import com.example.funfactoftheday.database.models.CategoryModel
@@ -37,8 +44,16 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
         CategoriesViewModel.CategoriesViewModelFactory((context?.applicationContext as FactApplication).repository)
     }
 
-    override fun onItemClick(itemBinding: CategoryBinding){
-        val category = CategoryModel(itemBinding.tvCategoryName.text as String, itemBinding.cbFavorite.isChecked)
+    override fun onFavoriteClick(itemBinding: CategoryBinding){
+        itemBinding.cbFavorite
+    }
+
+    override fun onTextClick(itemBinding: CategoryBinding){
+        val categoryModel = CategoryModel(itemBinding.tvCategoryName.text.toString(), itemBinding.cbFavorite.isChecked)
+        val bundle = Bundle()
+        bundle.putParcelable("categoryModel", categoryModel)
+        setFragmentResult("requestKey", bundleOf("bundleKey" to bundle))
+        findNavController().navigate(R.id.categoryFragment)
     }
 
 
@@ -86,7 +101,10 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = CategoryAdapter(this)
+//        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
+//        val navController = navHostFragment.navController
+
+        val adapter = CategoryAdapter(this, this)
         binding.rvCategoriesPage.adapter = adapter
         binding.rvCategoriesPage.layoutManager = LinearLayoutManager(requireContext())
 

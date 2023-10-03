@@ -12,8 +12,8 @@ class HomePageViewModel (private val appRepository: AppRepository): ViewModel() 
 
     val allFacts:LiveData<List<FactModel>> = appRepository.allFacts.asLiveData()
 
-    fun insert(factModel: FactModel) = viewModelScope.launch {
-        appRepository.insert(factModel)
+    fun insertFact(factModel: FactModel) = viewModelScope.launch {
+        appRepository.insertFact(factModel)
         Timber.e("Inserted ${factModel.factName}")
     }
 

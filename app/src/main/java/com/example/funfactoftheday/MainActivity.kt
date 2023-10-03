@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -29,6 +30,11 @@ class MainActivity : AppCompatActivity() {
 
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
 
+        binding.bottomNavigationView.setOnItemSelectedListener{
+            NavigationUI.onNavDestinationSelected(it, navController)
+            navController.popBackStack(it.itemId, inclusive = false)
+            true
+        }
 
 //        val homePageFragment = HomePageFragment()
 //        val categoryFragment = CategoriesFragment()

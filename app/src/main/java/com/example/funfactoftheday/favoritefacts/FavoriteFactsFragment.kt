@@ -35,7 +35,7 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
     override fun onItemClick(itemBinding: FactBinding) {
         val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
-        favoriteFactsViewModel.insert(fact)
+        favoriteFactsViewModel.insertFact(fact)
         Timber.e("on click working Fragment")
     }
 
@@ -97,7 +97,7 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
         binding.btnGenerateFunFact.setOnClickListener{
             val fact = FactModel(binding.etFunFactInput.text.toString())
-            favoriteFactsViewModel.insert(fact)
+            favoriteFactsViewModel.insertFact(fact)
         }
 
     }

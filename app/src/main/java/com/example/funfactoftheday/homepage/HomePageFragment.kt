@@ -35,7 +35,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
     override fun onItemClick(itemBinding: FactBinding) {
             val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
-            homePageViewModel.insert(fact)
+            homePageViewModel.insertFact(fact)
             Timber.e("on click working Fragment")
     }
 
@@ -103,7 +103,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
         binding.btnGenerateFunFact.setOnClickListener {
             val fact = FactModel(binding.etFunFactInput.text.toString())
-            homePageViewModel.insert(fact)
+            homePageViewModel.insertFact(fact)
 //            Timber.e("New Fact: ${homePageViewModel.allFacts}")
         }
     }

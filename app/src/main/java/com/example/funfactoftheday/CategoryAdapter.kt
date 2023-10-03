@@ -11,12 +11,13 @@ import com.example.funfactoftheday.databinding.CategoryBinding
 import com.example.funfactoftheday.databinding.FactBinding
 
 class CategoryAdapter (
-    private val listener: OnItemClickListener
+    private val favoriteListener: OnItemClickListener,
+    private val textListener: OnItemClickListener
     ): ListAdapter<CategoryModel, CategoryAdapter.CategoriesViewHolder>(CategoriesComparator()){
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoriesViewHolder {
             val itemBinding = CategoryBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            return CategoriesViewHolder(itemBinding, listener)
+            return CategoriesViewHolder(itemBinding, favoriteListener, textListener)
         }
 
     override fun onBindViewHolder(holder: CategoriesViewHolder, position: Int) {
@@ -24,12 +25,15 @@ class CategoryAdapter (
         holder.bind(current)
     }
 
-        class CategoriesViewHolder(private val itemBinding: CategoryBinding, private val listener: OnItemClickListener):RecyclerView.ViewHolder(itemBinding.root){
+        class CategoriesViewHolder(private val itemBinding: CategoryBinding, private val favoriteListener: OnItemClickListener, private val textListener:OnItemClickListener): RecyclerView.ViewHolder(itemBinding.root){
             fun bind(category: CategoryModel){
                 itemBinding.tvCategoryName.text = category.categoryName
                 itemBinding.cbFavorite.isChecked = category.isFavorite
                 itemBinding.cbFavorite.setOnClickListener{
-                    listener.onItemClick(itemBinding)
+                    favoriteListener.onFavoriteClick(itemBinding)
+                }
+                itemBinding.tvCategoryName.setOnClickListener{
+                    textListener.onTextClick(itemBinding)
                 }
             }
         }
@@ -46,7 +50,8 @@ class CategoryAdapter (
     }
 
     interface OnItemClickListener{
-        fun onItemClick(itemBinding: CategoryBinding)
+        fun onFavoriteClick(itemBinding: CategoryBinding)
+        fun onTextClick(itemBinding: CategoryBinding)
     }
 
     }

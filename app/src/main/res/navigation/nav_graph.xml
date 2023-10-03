@@ -11,9 +11,9 @@
         android:label="fragment_home_page"
         tools:layout="@layout/fragment_home_page" />
     <fragment
-        android:id="@+id/categoryFragment"
+        android:id="@+id/categoriesFragment"
         android:name="com.example.funfactoftheday.categories.CategoriesFragment"
-        android:label="fragment_category"
+        android:label="fragment_categories"
         tools:layout="@layout/fragment_categories" />
     <fragment
         android:id="@+id/favoriteFactsFragment"
@@ -25,4 +25,9 @@
         android:name="com.example.funfactoftheday.settings.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings"/>
+    <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.example.funfactoftheday.category.CategoryFragment"
+        android:label="fragment_category"
+        tools:layout="@layout/fragment_category"/>
 </navigation>

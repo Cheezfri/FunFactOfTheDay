@@ -14,8 +14,8 @@ class FavoriteFactsViewModel (private val appRepository: AppRepository): ViewMod
     val allFacts:LiveData<List<FactModel>> = appRepository.allFacts.asLiveData()
     val favoriteFacts:LiveData<List<FactModel>> = appRepository.favoriteFacts.asLiveData()
 
-    fun insert(factModel: FactModel) = viewModelScope.launch {
-        appRepository.insert(factModel)
+    fun insertFact(factModel: FactModel) = viewModelScope.launch {
+        appRepository.insertFact(factModel)
         Timber.e("Inserted ${factModel.factName}")
     }
 
