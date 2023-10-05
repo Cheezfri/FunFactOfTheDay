@@ -15,6 +15,10 @@ class CategoriesViewModel (private val appRepository: AppRepository): ViewModel(
         appRepository
     }
 
+//    fun insertCategoryModelCrossRef(factName: String, categoryName: String) = viewModelScope.launch {
+//        appRepository.insertCategoryModelCrossRefAndFactAndCategory(factName, categoryName)
+//    }
+
     class CategoriesViewModelFactory(private val repository: AppRepository): ViewModelProvider.Factory{
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(CategoriesViewModel::class.java)){

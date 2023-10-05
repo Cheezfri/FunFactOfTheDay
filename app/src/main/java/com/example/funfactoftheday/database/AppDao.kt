@@ -57,6 +57,14 @@ interface AppDao {
     @Query("SELECT * FROM fact_table WHERE factName = :factName")
     fun getCategoriesOfFacts(factName: String): Flow<List<FactsWithCategories>>
 
+    @Transaction
+    @Query("SELECT EXISTS(SELECT * FROM category_table WHERE categoryName = :categoryName)")
+    fun doesCategoryExist(categoryName: String):Boolean
+
+    @Transaction
+    @Query("SELECT EXISTS(SELECT * FROM fact_table WHERE factName = :factName)")
+    fun doesFactExist(factName: String):Boolean
+
 //    @Transaction
 //    suspend fun favoriteAFact(fact: FactModel){
 //        val factToChange =

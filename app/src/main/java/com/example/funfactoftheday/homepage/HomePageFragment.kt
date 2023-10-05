@@ -5,12 +5,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.funfactoftheday.AddAFactFragment
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.FactsAdapter
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
+import com.example.funfactoftheday.databinding.FragmentAddAFactBinding
 import com.example.funfactoftheday.databinding.FragmentHomePageBinding
 import timber.log.Timber
 
@@ -34,9 +38,8 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(itemBinding: FactBinding) {
-            val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
-            homePageViewModel.insertFact(fact)
-            Timber.e("on click working Fragment")
+        val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
+        homePageViewModel.insertFact(fact)
     }
 
     // TODO: Rename and change types of parameters
@@ -104,7 +107,8 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
         binding.btnGenerateFunFact.setOnClickListener {
             val fact = FactModel(binding.etFunFactInput.text.toString())
             homePageViewModel.insertFact(fact)
-//            Timber.e("New Fact: ${homePageViewModel.allFacts}")
+            var fragment = AddAFactFragment()
+            fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
     }
 

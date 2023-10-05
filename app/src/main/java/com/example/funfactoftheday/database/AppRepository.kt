@@ -6,7 +6,10 @@ import androidx.lifecycle.asLiveData
 import com.example.funfactoftheday.database.models.CategoriesWithFacts
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
+import com.example.funfactoftheday.database.reletions.CategoryModelCrossRef
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 
 class AppRepository(private val appDao:AppDao) {
 
@@ -25,6 +28,29 @@ class AppRepository(private val appDao:AppDao) {
     suspend fun insertCategory(categoryModel: CategoryModel){
         appDao.insertCategory(categoryModel)
     }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun insertCategoryModelCrossRef(factName: String, categoryName: String){
+        appDao.insertCategoryModelCrossRef(CategoryModelCrossRef(factName, categoryName))
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun doesCategoryExist(categoryName: String): Boolean{
+        return withContext(Dispatchers.IO){
+            appDao.doesCategoryExist(categoryName)
+        }
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun doesFactExist(factName: String): Boolean{
+        return withContext(Dispatchers.IO){
+            appDao.doesFactExist(factName)
+        }
+    }
+
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread

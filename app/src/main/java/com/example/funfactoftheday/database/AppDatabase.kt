@@ -71,6 +71,7 @@ abstract class AppDatabase : RoomDatabase() {
         testCategories.forEach{appDao.insertCategory(it)}
         factCategoryRelations.forEach{appDao.insertCategoryModelCrossRef(it)}
 
+//        Timber.e(appDao.doesFactExist("The World Is Flat!!!!").toString())
     }
 
     companion object {

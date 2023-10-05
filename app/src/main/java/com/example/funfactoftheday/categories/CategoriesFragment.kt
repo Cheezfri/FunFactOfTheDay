@@ -114,6 +114,10 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
             }
         }
 
+        binding.btnGenerateFunFact.setOnClickListener{
+//            categoriesViewModel.insertCategoryModelCrossRef("Factyyy", "Cattyyyy")
+        }
+
     }
 
 }
