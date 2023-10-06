@@ -12,7 +12,7 @@ class CategoriesViewModel (private val appRepository: AppRepository): ViewModel(
     val allCategories: LiveData<List<CategoryModel>> = appRepository.allCategories.asLiveData()
 
     fun insertCategory(categoryModel: CategoryModel) = viewModelScope.launch {
-        appRepository
+        appRepository.insertCategory(categoryModel)
     }
 
 //    fun insertCategoryModelCrossRef(factName: String, categoryName: String) = viewModelScope.launch {

@@ -95,9 +95,11 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
         binding.rvFactsHomePage.layoutManager = LinearLayoutManager(requireContext())
 
         homePageViewModel.allFacts.observe(viewLifecycleOwner){ facts ->
-            facts.let {
-                adapter.submitList(it as MutableList<FactModel>?)
-                Timber.e("List Submitted")
+            if(facts.isNotEmpty()){
+                facts.sortedBy { !it.isFavorite }.let {
+                    adapter.submitList(it as MutableList<FactModel>?)
+                    Timber.e("List Submitted")
+                }
             }
         }
 

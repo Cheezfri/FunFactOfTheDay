@@ -45,7 +45,8 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
     }
 
     override fun onFavoriteClick(itemBinding: CategoryBinding){
-        itemBinding.cbFavorite
+        val category = CategoryModel(itemBinding.tvCategoryName.text.toString(), itemBinding.cbFavorite.isChecked)
+        categoriesViewModel.insertCategory(category)
     }
 
     override fun onTextClick(itemBinding: CategoryBinding){
@@ -109,8 +110,10 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
         binding.rvCategoriesPage.layoutManager = LinearLayoutManager(requireContext())
 
         categoriesViewModel.allCategories.observe(viewLifecycleOwner){ categories ->
-            categories.let{
-                adapter.submitList(it as MutableList<CategoryModel>?)
+            if(categories.isNotEmpty()){
+                categories.sortedBy { !it.isFavorite }.let{
+                    adapter.submitList(it as MutableList<CategoryModel>?)
+                }
             }
         }
 
