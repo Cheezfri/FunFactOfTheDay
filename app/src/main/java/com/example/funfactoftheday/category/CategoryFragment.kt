@@ -6,10 +6,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.setFragmentResultListener
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.funfactoftheday.FactApplication
+import com.example.funfactoftheday.FactsAdapter
 import com.example.funfactoftheday.R
+import com.example.funfactoftheday.database.models.CategoriesWithFacts
 import com.example.funfactoftheday.database.models.CategoryModel
+import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.CategoryBinding
+import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentCategoryBinding
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,9 +32,18 @@ private const val ARG_PARAM2 = "param2"
  * Use the [CategoryFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CategoryFragment : Fragment() {
+class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
     private lateinit var binding: FragmentCategoryBinding
+
+    private val categoryViewModel: CategoryViewModel by viewModels {
+        CategoryViewModel.CategoryViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
+    override fun onItemClick(itemBinding: FactBinding) {
+        val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
+        categoryViewModel.insertFact(fact)
+    }
 
     // TODO: Rename and change types of parameters
     private var param1: String? = null
@@ -68,12 +88,27 @@ class CategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val adapter = FactsAdapter(this)
+        binding.rvFactsCategoryFragment.adapter = adapter
+        binding.rvFactsCategoryFragment.layoutManager = LinearLayoutManager(requireContext())
+        var categoryModel: CategoryModel?
+
         setFragmentResultListener("requestKey"){ requestKey, bundle ->
             val result = bundle.getBundle("bundleKey")
-//            result!!.getParcelable("categoryModel", CategoryModel::class.java)
-            val categoryModel = result!!.getParcelable<CategoryModel>("categoryModel")
-            binding.tvTest.text = "Name: $categoryModel.categoryName isFav: ${categoryModel!!.isFavorite}"
+            categoryModel = result!!.getParcelable<CategoryModel>("categoryModel")
+
+            categoryViewModel.viewModelScope.launch{
+                categoryViewModel.getFactsOfCategories(categoryModel!!).observe(viewLifecycleOwner){ items ->
+                    items.let {
+                            adapter.submitList(it[0].facts)
+                    }
+                }
+            }
         }
 
+
+
     }
+
 }

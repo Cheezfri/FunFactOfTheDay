@@ -89,9 +89,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.plant(Timber.DebugTree())
-        Timber.e("OnViewCreated")
-
-
 
         val adapter = FactsAdapter(this)
         binding.rvFactsHomePage.adapter = adapter
@@ -105,8 +102,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
         }
 
         binding.btnGenerateFunFact.setOnClickListener {
-            val fact = FactModel(binding.etFunFactInput.text.toString())
-            homePageViewModel.insertFact(fact)
             var fragment = AddAFactFragment()
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
