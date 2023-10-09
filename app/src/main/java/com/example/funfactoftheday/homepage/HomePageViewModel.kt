@@ -39,6 +39,10 @@ class HomePageViewModel (private val appRepository: AppRepository): ViewModel() 
         return@async appRepository.doesCategoryExist(categoryName)
     }.await()
 
+    fun searchFactDatabase(searchQuery:String): LiveData<List<FactModel>>{
+        return appRepository.searchFactDatabase(searchQuery).asLiveData()
+    }
+
     class HomePageViewModelFactory(private val repository: AppRepository): ViewModelProvider.Factory{
         override fun <T: ViewModel> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(HomePageViewModel::class.java)) {

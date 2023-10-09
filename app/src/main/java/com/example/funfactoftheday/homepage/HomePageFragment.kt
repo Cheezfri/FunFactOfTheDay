@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,12 +30,36 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 //TODO: Create Floating Action Bar to add facts
-class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
+class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchView.OnQueryTextListener {
 
     private lateinit var binding:FragmentHomePageBinding
+    private lateinit var adapter: FactsAdapter
 
     private val homePageViewModel: HomePageViewModel by viewModels {
         HomePageViewModel.HomePageViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if(query != null){
+            searchFactDatabase(query)
+        }
+        return true
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        if(query != null){
+            searchFactDatabase(query)
+        }
+        return true
+    }
+
+    private fun searchFactDatabase(query: String){
+        val searchQuery = "%$query%"
+        homePageViewModel.searchFactDatabase(searchQuery).observe(this) { list ->
+                list.sortedBy { !it.isFavorite }.let {
+                    adapter.submitList(it)
+            }
+        }
     }
 
     override fun onItemClick(itemBinding: FactBinding) {
@@ -90,7 +115,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
         super.onViewCreated(view, savedInstanceState)
         Timber.plant(Timber.DebugTree())
 
-        val adapter = FactsAdapter(this)
+        adapter = FactsAdapter(this)
         binding.rvFactsHomePage.adapter = adapter
         binding.rvFactsHomePage.layoutManager = LinearLayoutManager(requireContext())
 
@@ -106,10 +131,20 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
             }
         }
 
+        binding.searchViewFacts.setOnQueryTextListener(this)
+        binding.searchViewFacts.isSubmitButtonEnabled = true
+
         binding.btnGenerateFunFact.setOnClickListener {
             var fragment = AddAFactFragment()
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        if(binding.searchViewFacts.query.toString().isEmpty()){
+            onQueryTextSubmit("")
+        }
     }
+
+}

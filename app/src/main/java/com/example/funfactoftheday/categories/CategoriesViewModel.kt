@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import androidx.lifecycle.*
 import com.example.funfactoftheday.database.AppRepository
 import com.example.funfactoftheday.database.models.CategoryModel
+import com.example.funfactoftheday.database.models.FactModel
 import kotlinx.coroutines.launch
 
 @Keep
@@ -13,6 +14,10 @@ class CategoriesViewModel (private val appRepository: AppRepository): ViewModel(
 
     fun insertCategory(categoryModel: CategoryModel) = viewModelScope.launch {
         appRepository.insertCategory(categoryModel)
+    }
+
+    fun searchCategoryDatabase(searchQuery:String): LiveData<List<CategoryModel>>{
+        return appRepository.searchCategoryDatabase(searchQuery).asLiveData()
     }
 
 //    fun insertCategoryModelCrossRef(factName: String, categoryName: String) = viewModelScope.launch {

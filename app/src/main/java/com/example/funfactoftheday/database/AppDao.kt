@@ -65,8 +65,9 @@ interface AppDao {
     @Query("SELECT EXISTS(SELECT * FROM fact_table WHERE factName = :factName)")
     fun doesFactExist(factName: String):Boolean
 
-//    @Transaction
-//    suspend fun favoriteAFact(fact: FactModel){
-//        val factToChange =
-//    }
+    @Query("SELECT * FROM fact_table WHERE factName LIKE :searchQuery")
+    fun searchFactDatabase(searchQuery: String): Flow<List<FactModel>>
+
+    @Query("SELECT * FROM category_table where categoryName Like :searchQuery")
+    fun searchCategoryDatabase(searchQuery: String): Flow<List<CategoryModel>>
 }

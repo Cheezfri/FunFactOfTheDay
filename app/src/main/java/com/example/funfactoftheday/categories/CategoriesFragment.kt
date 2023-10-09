@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setFragmentResult
@@ -36,12 +37,36 @@ private const val ARG_PARAM2 = "param2"
  * Use the [CategoriesFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
+class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, SearchView.OnQueryTextListener{
 
     private lateinit var binding:FragmentCategoriesBinding
+    private lateinit var adapter:CategoryAdapter
 
     private val categoriesViewModel: CategoriesViewModel by viewModels {
         CategoriesViewModel.CategoriesViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if(query != null){
+            searchCategoryDatabase(query)
+        }
+        return true
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        if(query != null){
+            searchCategoryDatabase(query)
+        }
+        return true
+    }
+
+    private fun searchCategoryDatabase(query: String){
+        val searchQuery = "%$query%"
+        categoriesViewModel.searchCategoryDatabase(searchQuery).observe(this) { list ->
+            list.sortedBy { !it.isFavorite }.let {
+                adapter.submitList(it)
+            }
+        }
     }
 
     override fun onFavoriteClick(itemBinding: CategoryBinding){
@@ -105,7 +130,7 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
 //        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
 //        val navController = navHostFragment.navController
 
-        val adapter = CategoryAdapter(this, this)
+        adapter = CategoryAdapter(this, this)
         binding.rvCategoriesPage.adapter = adapter
         binding.rvCategoriesPage.layoutManager = LinearLayoutManager(requireContext())
 
@@ -117,10 +142,20 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener  {
             }
         }
 
-        binding.btnGenerateFunFact.setOnClickListener{
+        binding.searchViewCategories.setOnQueryTextListener(this)
+        binding.searchViewCategories.isSubmitButtonEnabled = true
+
+        binding.btnGenerateCategory.setOnClickListener{
 //            categoriesViewModel.insertCategoryModelCrossRef("Factyyy", "Cattyyyy")
         }
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if(binding.searchViewCategories.query.toString().isEmpty()){
+            onQueryTextSubmit("")
+        }
     }
 
 }
