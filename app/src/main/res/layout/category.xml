@@ -24,6 +24,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="@+id/tvCategoryName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tvCategoryName" />
+        app:layout_constraintTop_toTopOf="@+id/tvCategoryName"
+        android:button="@drawable/custom_checkbox"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

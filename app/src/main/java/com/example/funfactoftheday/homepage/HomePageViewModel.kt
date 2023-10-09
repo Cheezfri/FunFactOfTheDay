@@ -39,24 +39,6 @@ class HomePageViewModel (private val appRepository: AppRepository): ViewModel() 
         return@async appRepository.doesCategoryExist(categoryName)
     }.await()
 
-//        viewModelScope.launch {
-//            val boolean = appRepository.doesFactExist(factName)
-//            var toReturn = MutableLiveData<Boolean>(boolean)
-//
-//            toReturn = when(boolean){
-//                true -> {
-//                    Timber.e("From ViewModel $boolean")
-//                    MutableLiveData<Boolean>(boolean)
-//                }
-//                false -> {
-//                    Timber.e("From ViewModel $boolean")
-//                    MutableLiveData<Boolean>(boolean)
-//                }
-//            }
-//        }
-
-
-
     class HomePageViewModelFactory(private val repository: AppRepository): ViewModelProvider.Factory{
         override fun <T: ViewModel> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(HomePageViewModel::class.java)) {

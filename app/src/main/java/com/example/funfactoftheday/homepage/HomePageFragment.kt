@@ -99,6 +99,9 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener {
                 facts.sortedBy { !it.isFavorite }.let {
                     adapter.submitList(it as MutableList<FactModel>?)
                     Timber.e("List Submitted")
+                    for(i in it){
+                        Timber.e("Fact: ${i.factName} isFav: ${i.isFavorite}")
+                    }
                 }
             }
         }
