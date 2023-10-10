@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.FragmentManager
@@ -15,10 +16,7 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.funfactoftheday.CategoryAdapter
-import com.example.funfactoftheday.FactApplication
-import com.example.funfactoftheday.FactsAdapter
-import com.example.funfactoftheday.R
+import com.example.funfactoftheday.*
 import com.example.funfactoftheday.database.AppDao
 import com.example.funfactoftheday.database.AppDatabase
 import com.example.funfactoftheday.database.models.CategoryModel
@@ -146,7 +144,8 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
         binding.searchViewCategories.isSubmitButtonEnabled = true
 
         binding.btnGenerateCategory.setOnClickListener{
-//            categoriesViewModel.insertCategoryModelCrossRef("Factyyy", "Cattyyyy")
+            val fragment = AddACategoryFragment()
+            fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
 
     }

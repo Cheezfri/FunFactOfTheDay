@@ -17,6 +17,7 @@ import com.example.funfactoftheday.categories.CategoriesFragment
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.ActivityMainBinding
+import com.example.funfactoftheday.databinding.FragmentAddACategoryBinding
 import com.example.funfactoftheday.databinding.FragmentAddAFactBinding
 import com.example.funfactoftheday.favoritefacts.FavoriteFactsFragment
 import com.example.funfactoftheday.homepage.HomePageFragment
@@ -25,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), AddAFactFragment.NoticeDialogListener {
+class MainActivity : AppCompatActivity(), AddAFactFragment.NoticeDialogListener, AddACategoryFragment.NoticeDialogListener {
 
 //    private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
@@ -39,20 +40,30 @@ class MainActivity : AppCompatActivity(), AddAFactFragment.NoticeDialogListener 
 //        viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
 
     viewModel.viewModelScope.launch {
-        val isOldFact = viewModel.doesFactExist(binding.etFactName.text.toString())
-        val isOldCategory = viewModel.doesCategoryExist(binding.etCategoryName.text.toString())
-        if(!isOldFact){
-            viewModel.insertFact(FactModel(binding.etFactName.text.toString()))
-        }
-        if(!isOldCategory){
-            viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString()))
-        }
+//        val isOldFact = viewModel.doesFactExist(binding.etFactName.text.toString())
+//        val isOldCategory = viewModel.doesCategoryExist(binding.etCategoryName.text.toString())
+//        if(!isOldFact){
+//            viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
+//        }
+//        if(!isOldCategory){
+//            viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), , binding.cbFavoriteCategory.isChecked))
+//        }
+        viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavoriteCategory.isChecked))
+        viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
         viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
-        Timber.e("From Main Act: Fact: $isOldFact !!! Category: $isOldCategory")
+//        Timber.e("From Main Act: Fact: $isOldFact !!! Category: $isOldCategory")
     }
 
 //        Timber.e("Positive Click in Homepage: ${binding.etCategoryName.text} and ${binding.etFactName.text}")
 //        Timber.e("Positive Click in Homepage: ${binding.etFactName.text} and ${binding.etCategoryName.text} and ${viewModel.result.value}")
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddACategoryBinding) {
+        // User taps the dialog's positive button.
+        viewModel.viewModelScope.launch {
+            viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavorite.isChecked))
+            Timber.e("From Main Act:Category: ${binding.etCategoryName.text} ${binding.cbFavorite.isChecked}")
+        }
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {

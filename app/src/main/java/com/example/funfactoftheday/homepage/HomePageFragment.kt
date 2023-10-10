@@ -135,7 +135,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         binding.searchViewFacts.isSubmitButtonEnabled = true
 
         binding.btnGenerateFunFact.setOnClickListener {
-            var fragment = AddAFactFragment()
+            val fragment = AddAFactFragment()
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
     }

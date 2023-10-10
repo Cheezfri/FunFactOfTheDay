@@ -101,7 +101,7 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener {
             categoryViewModel.viewModelScope.launch{
                 categoryViewModel.getFactsOfCategories(categoryModel!!).observe(viewLifecycleOwner){ items ->
                     items.let {
-                            adapter.submitList(it[0].facts)
+                            adapter.submitList(it[0].facts.sortedBy { !it.isFavorite })
                     }
                 }
             }
