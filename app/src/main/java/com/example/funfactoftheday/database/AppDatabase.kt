@@ -49,7 +49,6 @@ abstract class AppDatabase : RoomDatabase() {
             FactModel( "The bat is the only mammal that can fly."),
             FactModel( "For every human in the world there are one million ants."),
             FactModel( "A tarantula spider can survive for more than two years without food."),
-            FactModel( "Ants never sleep. Also they don’t have lungs."),
             FactModel( "Cats have lived with people for only 7,000 years."),
             FactModel( "We share 70% of our DNA with a slug."),
 
@@ -90,7 +89,6 @@ abstract class AppDatabase : RoomDatabase() {
             CategoryModelCrossRef("The bat is the only mammal that can fly.", "Animals"),
             CategoryModelCrossRef("For every human in the world there are one million ants.", "Animals"),
             CategoryModelCrossRef("A tarantula spider can survive for more than two years without food.", "Animals"),
-            CategoryModelCrossRef("Ants never sleep. Also they don’t have lungs.", "Animals"),
             CategoryModelCrossRef("Cats have lived with people for only 7,000 years.", "Animals"),
             CategoryModelCrossRef("We share 70% of our DNA with a slug.", "Animals"),
             CategoryModelCrossRef("Gorillas can catch human colds and other illnesses.", "Medicine"),

@@ -8,6 +8,8 @@ import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.database.models.FactsWithCategories
 import com.example.funfactoftheday.database.reletions.CategoryModelCrossRef
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.toList
 
 @Dao
 interface AppDao {
@@ -70,4 +72,14 @@ interface AppDao {
 
     @Query("SELECT * FROM category_table where categoryName Like :searchQuery")
     fun searchCategoryDatabase(searchQuery: String): Flow<List<CategoryModel>>
+
+//    @Query("SELECT * FROM :listToSearch WHERE factName LIKE :searchQuery")
+//    fun searchFactOfSpecificCategory(searchQuery: String, listToSearch:List<FactModel>): Flow<List<FactModel>>
+
+//    @Transaction
+//    suspend fun searchFactOfSpecificCategory(searchQuery: String, categoryName: String): Flow<List<FactModel>>{
+//        val listToSearch = getFactsOfCategories(categoryName).toList()[0][0].facts
+//        return customSearch(searchQuery, listToSearch)
+//    }
+
 }

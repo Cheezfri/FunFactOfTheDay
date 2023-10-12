@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
@@ -21,9 +22,8 @@ import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentCategoryBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.*
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
@@ -32,12 +32,49 @@ private const val ARG_PARAM2 = "param2"
  * Use the [CategoryFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener {
+class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchView.OnQueryTextListener  {
 
+    //TODO: Add an AddFact Button to Specific
     private lateinit var binding: FragmentCategoryBinding
+    private lateinit var adapter: FactsAdapter
+    private lateinit var categoryModel: CategoryModel
+    private lateinit var currentListOfFacts:List<FactModel>
+    private var isQueryHappening = false
+    private var currentQuery = ""
 
     private val categoryViewModel: CategoryViewModel by viewModels {
         CategoryViewModel.CategoryViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
+    override fun onQueryTextSubmit(query: String?): Boolean {
+        if(query != null){
+            isQueryHappening = true
+            currentQuery = query
+            searchFactDatabase(query)
+        }
+        return false
+    }
+
+    override fun onQueryTextChange(query: String?): Boolean {
+        if(query != null){
+            isQueryHappening = true
+            currentQuery = query
+            searchFactDatabase(query)
+        }
+        return false
+    }
+
+    private fun searchFactDatabase(query: String){
+        var listToAdd = mutableListOf<FactModel>()
+
+        for(item in currentListOfFacts){
+            if(item.factName.toLowerCase().contains(query.lowercase(Locale.getDefault()))){
+                listToAdd.add(item)
+            }
+        }
+//        if(listToAdd.isNotEmpty()){
+            adapter.submitList(listToAdd.sortedBy { !it.isFavorite })
+//        }
     }
 
     override fun onItemClick(itemBinding: FactBinding) {
@@ -45,7 +82,6 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener {
         categoryViewModel.insertFact(fact)
     }
 
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -75,7 +111,6 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener {
          * @param param2 Parameter 2.
          * @return A new instance of fragment CategoryFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             CategoryFragment().apply {
@@ -89,26 +124,39 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = FactsAdapter(this)
+        adapter = FactsAdapter(this)
         binding.rvFactsCategoryFragment.adapter = adapter
         binding.rvFactsCategoryFragment.layoutManager = LinearLayoutManager(requireContext())
-        var categoryModel: CategoryModel?
 
         setFragmentResultListener("requestKey"){ requestKey, bundle ->
             val result = bundle.getBundle("bundleKey")
-            categoryModel = result!!.getParcelable<CategoryModel>("categoryModel")
+            categoryModel = result!!.getParcelable<CategoryModel>("categoryModel")!!
 
             categoryViewModel.viewModelScope.launch{
                 categoryViewModel.getFactsOfCategories(categoryModel!!).observe(viewLifecycleOwner){ items ->
-                    items.let {
-                            adapter.submitList(it[0].facts.sortedBy { !it.isFavorite })
+                    items.let { itt ->
+                        currentListOfFacts = itt[0].facts
+                        if(isQueryHappening){
+                            searchFactDatabase(currentQuery)
+                        } else {
+                            adapter.submitList(itt[0].facts.sortedBy { !it.isFavorite })
+                        }
                     }
                 }
             }
+
+            binding.searchViewFacts.setOnQueryTextListener(this)
+            binding.searchViewFacts.isSubmitButtonEnabled = true
+
         }
 
-
-
     }
+
+//    override fun onResume() {
+//        super.onResume()
+//        if(binding.searchViewFacts.query.toString().isEmpty()){
+//            onQueryTextSubmit("")
+//        }
+//    }
 
 }

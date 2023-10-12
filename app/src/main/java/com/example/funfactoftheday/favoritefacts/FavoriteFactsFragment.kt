@@ -27,6 +27,7 @@ private const val ARG_PARAM2 = "param2"
  */
 class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener {
 
+    //TODO: Add Search bar for faveFacts fragment
     private lateinit var binding:FragmentFavoriteFactsBinding
 
     private val favoriteFactsViewModel: FavoriteFactsViewModel by viewModels {

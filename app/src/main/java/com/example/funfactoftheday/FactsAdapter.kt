@@ -3,6 +3,8 @@ package com.example.funfactoftheday
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
+import android.widget.Filter
+import android.widget.Filterable
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -16,7 +18,6 @@ import timber.log.Timber
 class FactsAdapter(
     private val listener: OnItemClickListener
 ) : ListAdapter<FactModel, FactsAdapter.FactsViewHolder>(FactsComparator())
-//
 {
 
     //inflates layout

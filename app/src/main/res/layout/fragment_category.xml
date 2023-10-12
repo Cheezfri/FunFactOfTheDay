@@ -23,13 +23,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/etFactInput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/btnGenerateFunFact"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/btnGenerateFunFact" />
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchViewFacts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:defaultQueryHint="Search For Facts"
+            app:iconifiedByDefault="false"
+            app:layout_constraintEnd_toStartOf="@+id/btnGenerateFunFact"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/btnGenerateFunFact" />
 
     <Button
         android:id="@+id/btnGenerateFunFact"

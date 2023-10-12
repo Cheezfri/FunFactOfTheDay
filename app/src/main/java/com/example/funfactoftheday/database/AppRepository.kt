@@ -57,7 +57,6 @@ class AppRepository(private val appDao:AppDao) {
         return withContext(Dispatchers.IO){
             appDao.getFactsOfCategories(categoryModel.categoryName).asLiveData()
         }
-//        return appDao.getFactsOfCategories(categoryModel.categoryName).asLiveData()
     }
 
     fun searchFactDatabase(searchQuery: String): Flow<List<FactModel>>{
@@ -67,5 +66,9 @@ class AppRepository(private val appDao:AppDao) {
     fun searchCategoryDatabase(searchQuery: String): Flow<List<CategoryModel>>{
         return appDao.searchCategoryDatabase(searchQuery)
     }
+
+//    fun searchFactOfSpecificCategory(searchQuery: String, listToSearch:List<FactModel>): Flow<List<FactModel>>{
+//        return appDao.searchFactOfSpecificCategory(searchQuery, listToSearch)
+//    }
 
 }

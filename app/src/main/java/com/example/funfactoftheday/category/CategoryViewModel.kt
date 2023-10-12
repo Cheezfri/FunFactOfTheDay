@@ -6,6 +6,7 @@ import com.example.funfactoftheday.database.models.CategoriesWithFacts
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class CategoryViewModel(private val appRepository: AppRepository): ViewModel() {
@@ -19,6 +20,14 @@ class CategoryViewModel(private val appRepository: AppRepository): ViewModel() {
             appRepository.insertFact(factModel)
         }
 
+//    fun searchFactDatabase(searchQuery:String): LiveData<List<FactModel>>{
+//        return appRepository.searchFactDatabase(searchQuery).asLiveData()
+//    }
+//
+//    suspend fun searchFactOfSpecificCategory(searchQuery: String, listToSearch:List<FactModel>):
+//            LiveData<List<FactModel>> = viewModelScope.async {
+//                return@async appRepository.searchFactOfSpecificCategory(searchQuery, listToSearch).asLiveData()
+//    }.await()
 
     class CategoryViewModelFactory(private val repository: AppRepository): ViewModelProvider.Factory{
         override fun <T: ViewModel> create(modelClass: Class<T>): T {
