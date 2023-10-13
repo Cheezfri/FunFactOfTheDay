@@ -1,32 +1,23 @@
 package com.example.funfactoftheday
 
-import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.funfactoftheday.categories.CategoriesFragment
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.ActivityMainBinding
 import com.example.funfactoftheday.databinding.FragmentAddACategoryBinding
+import com.example.funfactoftheday.databinding.FragmentAddAFactAndCategoryBinding
 import com.example.funfactoftheday.databinding.FragmentAddAFactBinding
-import com.example.funfactoftheday.favoritefacts.FavoriteFactsFragment
-import com.example.funfactoftheday.homepage.HomePageFragment
 import com.example.funfactoftheday.homepage.HomePageViewModel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), AddAFactFragment.NoticeDialogListener, AddACategoryFragment.NoticeDialogListener {
+class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDialogListener, AddACategoryFragment.NoticeDialogListener, AddAFactFragment.NoticeDialogListener {
 
 //    private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
@@ -35,19 +26,11 @@ class MainActivity : AppCompatActivity(), AddAFactFragment.NoticeDialogListener,
         HomePageViewModel.HomePageViewModelFactory((this.applicationContext as FactApplication).repository)
     }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddAFactBinding) {
+    override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddAFactAndCategoryBinding) {
         // User taps the dialog's positive button.
 //        viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
 
     viewModel.viewModelScope.launch {
-//        val isOldFact = viewModel.doesFactExist(binding.etFactName.text.toString())
-//        val isOldCategory = viewModel.doesCategoryExist(binding.etCategoryName.text.toString())
-//        if(!isOldFact){
-//            viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
-//        }
-//        if(!isOldCategory){
-//            viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), , binding.cbFavoriteCategory.isChecked))
-//        }
         viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavoriteCategory.isChecked))
         viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
         viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
@@ -63,6 +46,15 @@ class MainActivity : AppCompatActivity(), AddAFactFragment.NoticeDialogListener,
         viewModel.viewModelScope.launch {
             viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavorite.isChecked))
             Timber.e("From Main Act:Category: ${binding.etCategoryName.text} ${binding.cbFavorite.isChecked}")
+        }
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddAFactBinding, category: String) {
+        // User taps the dialog's positive button.
+        viewModel.viewModelScope.launch {
+            viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
+            viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), category)
+            Timber.e("From Main Act:Category: ${binding.etFactName.text} ${binding.cbFavoriteFact.isChecked}")
         }
     }
 

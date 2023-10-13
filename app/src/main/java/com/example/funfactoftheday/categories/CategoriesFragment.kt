@@ -76,7 +76,7 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
         val categoryModel = CategoryModel(itemBinding.tvCategoryName.text.toString(), itemBinding.cbFavorite.isChecked)
         val bundle = Bundle()
         bundle.putParcelable("categoryModel", categoryModel)
-        setFragmentResult("requestKey", bundleOf("bundleKey" to bundle))
+        setFragmentResult("CategoriesToCategoryRequestKey", bundleOf("CategoriesToCategoryBundleKey" to bundle))
         findNavController().navigate(R.id.categoryFragment)
     }
 

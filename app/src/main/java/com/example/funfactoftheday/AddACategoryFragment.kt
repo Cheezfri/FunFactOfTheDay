@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import com.example.funfactoftheday.databinding.FragmentAddACategoryBinding
-import com.example.funfactoftheday.databinding.FragmentAddAFactBinding
 import timber.log.Timber
 
 // TODO: Rename parameter arguments, choose names that match
@@ -107,7 +106,6 @@ class AddACategoryFragment : DialogFragment(){
          * @param param2 Parameter 2.
          * @return A new instance of fragment AddACategoryFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             AddACategoryFragment().apply {

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class CategoryViewModel(private val appRepository: AppRepository): ViewModel() {
 
     suspend fun getFactsOfCategories(categoryModel: CategoryModel):
-            LiveData<List<CategoriesWithFacts>> = viewModelScope.async {
+            LiveData<CategoriesWithFacts> = viewModelScope.async {
         return@async appRepository.getFactsOfCategories(categoryModel)
     }.await()
 

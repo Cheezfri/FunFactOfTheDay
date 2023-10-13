@@ -5,19 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.os.bundleOf
+import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.funfactoftheday.AddAFactFragment
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.FactsAdapter
-import com.example.funfactoftheday.R
-import com.example.funfactoftheday.database.models.CategoriesWithFacts
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
-import com.example.funfactoftheday.databinding.CategoryBinding
 import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentCategoryBinding
 import kotlinx.coroutines.launch
@@ -128,18 +128,18 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         binding.rvFactsCategoryFragment.adapter = adapter
         binding.rvFactsCategoryFragment.layoutManager = LinearLayoutManager(requireContext())
 
-        setFragmentResultListener("requestKey"){ requestKey, bundle ->
-            val result = bundle.getBundle("bundleKey")
+        setFragmentResultListener("CategoriesToCategoryRequestKey"){ requestKey, bundle ->
+            val result = bundle.getBundle("CategoriesToCategoryBundleKey")
             categoryModel = result!!.getParcelable<CategoryModel>("categoryModel")!!
 
             categoryViewModel.viewModelScope.launch{
                 categoryViewModel.getFactsOfCategories(categoryModel!!).observe(viewLifecycleOwner){ items ->
                     items.let { itt ->
-                        currentListOfFacts = itt[0].facts
+                        currentListOfFacts = itt.facts
                         if(isQueryHappening){
                             searchFactDatabase(currentQuery)
                         } else {
-                            adapter.submitList(itt[0].facts.sortedBy { !it.isFavorite })
+                            adapter.submitList(itt.facts.sortedBy { !it.isFavorite })
                         }
                     }
                 }
@@ -147,6 +147,12 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
 
             binding.searchViewFacts.setOnQueryTextListener(this)
             binding.searchViewFacts.isSubmitButtonEnabled = true
+            binding.btnGenerateFunFact.setOnClickListener{
+//                Timber.e("In CatFrag, CategoryName: ${categoryModel.categoryName}")
+//                setFragmentResult("CategoryToDialogFragmentRequestKey", bundleOf("CategoryToDialogBundleKey" to categoryModel.categoryName))
+                val fragment = AddAFactFragment.newInstance(categoryModel.categoryName)
+                fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
+            }
 
         }
 

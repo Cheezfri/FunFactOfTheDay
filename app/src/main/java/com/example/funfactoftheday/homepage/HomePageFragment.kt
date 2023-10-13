@@ -7,15 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.funfactoftheday.AddAFactFragment
+import com.example.funfactoftheday.AddAFactAndCategoryFragment
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.FactsAdapter
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
-import com.example.funfactoftheday.databinding.FragmentAddAFactBinding
 import com.example.funfactoftheday.databinding.FragmentHomePageBinding
 import timber.log.Timber
 
@@ -131,7 +129,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         binding.searchViewFacts.isSubmitButtonEnabled = true
 
         binding.btnGenerateFunFact.setOnClickListener {
-            val fragment = AddAFactFragment()
+            val fragment = AddAFactAndCategoryFragment()
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
     }

@@ -53,7 +53,7 @@ class AppRepository(private val appDao:AppDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun getFactsOfCategories(categoryModel: CategoryModel): LiveData<List<CategoriesWithFacts>>{
+    suspend fun getFactsOfCategories(categoryModel: CategoryModel): LiveData<CategoriesWithFacts>{
         return withContext(Dispatchers.IO){
             appDao.getFactsOfCategories(categoryModel.categoryName).asLiveData()
         }

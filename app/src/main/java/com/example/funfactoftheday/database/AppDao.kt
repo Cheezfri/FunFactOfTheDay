@@ -53,11 +53,11 @@ interface AppDao {
 
     @Transaction
     @Query("SELECT * FROM category_table WHERE categoryName = :categoryName")
-    fun getFactsOfCategories(categoryName: String): Flow<List<CategoriesWithFacts>>
+    fun getFactsOfCategories(categoryName: String): Flow<CategoriesWithFacts>
 
     @Transaction
     @Query("SELECT * FROM fact_table WHERE factName = :factName")
-    fun getCategoriesOfFacts(factName: String): Flow<List<FactsWithCategories>>
+    fun getCategoriesOfFacts(factName: String): Flow<FactsWithCategories>
 
     @Transaction
     @Query("SELECT EXISTS(SELECT * FROM category_table WHERE categoryName = :categoryName)")

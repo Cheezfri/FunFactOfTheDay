@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:padding="16dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".AddAFactFragment">
+    tools:context=".AddAFactAndCategoryFragment">
 
     <EditText
         android:id="@+id/etFactName"
@@ -38,5 +38,39 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvFavoriteFact"
         app:layout_constraintEnd_toEndOf="@+id/etFactName"
         app:layout_constraintTop_toTopOf="@+id/tvFavoriteFact" />
+
+    <EditText
+        android:id="@+id/etCategoryName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvFavoriteFact"
+        android:hint="Category of the Fact"/>
+
+    <EditText
+        android:id="@+id/tvFavoriteCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:longClickable="false"
+        android:text="@string/Favorite_the_Category"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/etCategoryName" />
+
+    <CheckBox
+        android:id="@+id/cbFavoriteCategory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/custom_checkbox"
+        app:layout_constraintBottom_toBottomOf="@+id/tvFavoriteCategory"
+        app:layout_constraintEnd_toEndOf="@+id/tvFavoriteCategory"
+        app:layout_constraintTop_toTopOf="@+id/tvFavoriteCategory" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
