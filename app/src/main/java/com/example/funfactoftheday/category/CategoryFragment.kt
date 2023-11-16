@@ -34,13 +34,13 @@ private const val ARG_PARAM2 = "param2"
  */
 class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchView.OnQueryTextListener  {
 
-    //TODO: Add an AddFact Button to Specific
     private lateinit var binding: FragmentCategoryBinding
     private lateinit var adapter: FactsAdapter
     private lateinit var categoryModel: CategoryModel
     private lateinit var currentListOfFacts:List<FactModel>
     private var isQueryHappening = false
     private var currentQuery = ""
+    private var tempFacts:MutableList<FactModel> = mutableListOf()
 
     private val categoryViewModel: CategoryViewModel by viewModels {
         CategoryViewModel.CategoryViewModelFactory((context?.applicationContext as FactApplication).repository)
@@ -65,6 +65,12 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
     }
 
     private fun searchFactDatabase(query: String){
+        categoryViewModel.viewModelScope.launch {
+            for(fact in tempFacts){
+                categoryViewModel.insertFact(fact)
+            }
+            tempFacts.removeAll(tempFacts)
+        }
         var listToAdd = mutableListOf<FactModel>()
 
         for(item in currentListOfFacts){
@@ -79,7 +85,8 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
 
     override fun onItemClick(itemBinding: FactBinding) {
         val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
-        categoryViewModel.insertFact(fact)
+        tempFacts.add(fact)
+//        categoryViewModel.insertFact(fact)
     }
 
     private var param1: String? = null
@@ -127,6 +134,7 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         adapter = FactsAdapter(this)
         binding.rvFactsCategoryFragment.adapter = adapter
         binding.rvFactsCategoryFragment.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvFactsCategoryFragment.setItemViewCacheSize(10000)
 
         setFragmentResultListener("CategoriesToCategoryRequestKey"){ requestKey, bundle ->
             val result = bundle.getBundle("CategoriesToCategoryBundleKey")
@@ -136,26 +144,47 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
                 categoryViewModel.getFactsOfCategories(categoryModel!!).observe(viewLifecycleOwner){ items ->
                     items.let { itt ->
                         currentListOfFacts = itt.facts
-                        if(isQueryHappening){
-                            searchFactDatabase(currentQuery)
+                        if(currentListOfFacts.isEmpty()){
+                            binding.rvFactsCategoryFragment.visibility = View.INVISIBLE
+                            binding.tvEmptyList.visibility = View.VISIBLE
                         } else {
-                            adapter.submitList(itt.facts.sortedBy { !it.isFavorite })
+                            binding.rvFactsCategoryFragment.visibility = View.VISIBLE
+                            binding.tvEmptyList.visibility = View.INVISIBLE
+                            if(isQueryHappening){
+                                searchFactDatabase(currentQuery)
+                            } else {
+                                adapter.submitList(itt.facts.sortedBy { !it.isFavorite })
+                            }
                         }
                     }
                 }
             }
 
             binding.searchViewFacts.setOnQueryTextListener(this)
-            binding.searchViewFacts.isSubmitButtonEnabled = true
+//            binding.searchViewFacts.isSubmitButtonEnabled = true
             binding.btnGenerateFunFact.setOnClickListener{
-//                Timber.e("In CatFrag, CategoryName: ${categoryModel.categoryName}")
-//                setFragmentResult("CategoryToDialogFragmentRequestKey", bundleOf("CategoryToDialogBundleKey" to categoryModel.categoryName))
+                categoryViewModel.viewModelScope.launch {
+                    for(fact in tempFacts){
+                        categoryViewModel.insertFact(fact)
+                    }
+                    tempFacts.removeAll(tempFacts)
+                }
                 val fragment = AddAFactFragment.newInstance(categoryModel.categoryName)
                 fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
             }
 
         }
 
+    }
+
+    override fun onPause() {
+        super.onPause()
+        categoryViewModel.viewModelScope.launch {
+            for(fact in tempFacts){
+                categoryViewModel.insertFact(fact)
+            }
+            tempFacts.removeAll(tempFacts)
+        }
     }
 
 //    override fun onResume() {

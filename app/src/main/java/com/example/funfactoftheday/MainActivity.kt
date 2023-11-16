@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         // User taps the dialog's positive button.
         viewModel.viewModelScope.launch {
             viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavorite.isChecked))
-            Timber.e("From Main Act:Category: ${binding.etCategoryName.text} ${binding.cbFavorite.isChecked}")
+//            Timber.e("From Main Act:Category: ${binding.etCategoryName.text} ${binding.cbFavorite.isChecked}")
         }
     }
 
@@ -54,13 +54,13 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         viewModel.viewModelScope.launch {
             viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
             viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), category)
-            Timber.e("From Main Act:Category: ${binding.etFactName.text} ${binding.cbFavoriteFact.isChecked}")
+//            Timber.e("From Main Act:Category: ${binding.etFactName.text} ${binding.cbFavoriteFact.isChecked}")
         }
     }
 
     override fun onDialogNegativeClick(dialog: DialogFragment) {
         // User taps the dialog's negative button.
-        Timber.e("Negative Click in Homepage")
+//        Timber.e("Negative Click in Homepage")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

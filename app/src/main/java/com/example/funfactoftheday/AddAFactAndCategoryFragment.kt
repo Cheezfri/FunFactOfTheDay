@@ -80,7 +80,6 @@ class AddAFactAndCategoryFragment : DialogFragment() {
                     })
                 .setNegativeButton("Cancel",
                     DialogInterface.OnClickListener { dialog, id ->
-                        Timber.e("Cancel Clicked")
                         listener.onDialogNegativeClick(this)
 //                        getDialog()!!.cancel()
                     })

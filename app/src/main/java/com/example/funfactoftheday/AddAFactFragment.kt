@@ -17,7 +17,6 @@ import androidx.fragment.app.setFragmentResultListener
 import com.example.funfactoftheday.databinding.FragmentAddAFactBinding
 import timber.log.Timber
 
-// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -27,7 +26,6 @@ private const val ARG_PARAM2 = "param2"
  * Use the [AddAFactFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-//TODO: Use setfragmentlistener to get category name to add categoryfactcrossre
 class AddAFactFragment : DialogFragment() {
 
 //    setFragmentResultListener("CategoryToDialogFragmentRequestKey") { requestKey, bundle ->
@@ -35,7 +33,6 @@ class AddAFactFragment : DialogFragment() {
 //        Timber.e("In AddAFactFrag, categoryName: $categoryName")
 //    } //This one
 
-    // TODO: Rename and change types of parameters
     private var categoryName: String? = null
 
     internal lateinit var listener: NoticeDialogListener
@@ -117,7 +114,6 @@ class AddAFactFragment : DialogFragment() {
          * @param param2 Parameter 2.
          * @return A new instance of fragment AddAFact.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(categoryName: String) =
             AddAFactFragment().apply {

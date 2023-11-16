@@ -19,7 +19,6 @@ class HomePageViewModel (private val appRepository: AppRepository): ViewModel() 
 
     fun insertFact(factModel: FactModel) = viewModelScope.launch {
         appRepository.insertFact(factModel)
-        Timber.e("Inserted ${factModel.factName}")
     }
 
     fun insertCategory(categoryModel: CategoryModel) = viewModelScope.launch{

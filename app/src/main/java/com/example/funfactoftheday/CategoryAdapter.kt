@@ -44,7 +44,6 @@ class CategoryAdapter (
         }
 
         override fun areContentsTheSame(oldItem: CategoryModel, newItem: CategoryModel): Boolean {
-            //TODO: check for isfavorite is true also
             return (oldItem.categoryName == newItem.categoryName && oldItem.isFavorite == newItem.isFavorite)
         }
     }

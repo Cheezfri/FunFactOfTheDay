@@ -3,22 +3,26 @@ package com.example.funfactoftheday
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
-import android.widget.Filter
-import android.widget.Filterable
-import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.funfactoftheday.database.models.CategoriesWithFacts
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
 import timber.log.Timber
 
-//TODO: Turn Favorite button to an OnClickListener to toggle favorites
 class FactsAdapter(
     private val listener: OnItemClickListener
 ) : ListAdapter<FactModel, FactsAdapter.FactsViewHolder>(FactsComparator())
 {
+
+    fun getItemPosition(factName: String?): Int {
+        for (i in 0 until this.currentList.size) {
+            if (this.currentList[i].factName.contentEquals(factName)) {
+                return i
+            }
+        }
+        return -1
+    }
 
     //inflates layout
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactsViewHolder {
@@ -38,10 +42,8 @@ class FactsAdapter(
             itemBinding.cbFavorite.isChecked = fact.isFavorite
             itemBinding.cbFavorite.setOnClickListener{
                 listener.onItemClick(itemBinding)
-                Timber.e("OnClick Working Adapter")
             }
         }
-
     }
 
     class FactsComparator : DiffUtil.ItemCallback<FactModel>(){

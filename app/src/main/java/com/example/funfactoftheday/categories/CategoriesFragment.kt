@@ -12,6 +12,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -25,7 +26,7 @@ import com.example.funfactoftheday.databinding.FragmentCategoriesBinding
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-// TODO: Rename parameter arguments, choose names that match
+
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
@@ -39,6 +40,7 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
 
     private lateinit var binding:FragmentCategoriesBinding
     private lateinit var adapter:CategoryAdapter
+    private var tempCategories:MutableList<CategoryModel> = mutableListOf()
 
     private val categoriesViewModel: CategoriesViewModel by viewModels {
         CategoriesViewModel.CategoriesViewModelFactory((context?.applicationContext as FactApplication).repository)
@@ -59,6 +61,12 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
     }
 
     private fun searchCategoryDatabase(query: String){
+        categoriesViewModel.viewModelScope.launch {
+            for(category in tempCategories){
+                categoriesViewModel.insertCategory(category)
+            }
+            tempCategories.removeAll(tempCategories)
+        }
         val searchQuery = "%$query%"
         categoriesViewModel.searchCategoryDatabase(searchQuery).observe(this) { list ->
             list.sortedBy { !it.isFavorite }.let {
@@ -69,7 +77,8 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
 
     override fun onFavoriteClick(itemBinding: CategoryBinding){
         val category = CategoryModel(itemBinding.tvCategoryName.text.toString(), itemBinding.cbFavorite.isChecked)
-        categoriesViewModel.insertCategory(category)
+        tempCategories.add(category)
+    //        categoriesViewModel.insertCategory(category)
     }
 
     override fun onTextClick(itemBinding: CategoryBinding){
@@ -81,7 +90,6 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
     }
 
 
-    // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
 
@@ -111,7 +119,6 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
          * @param param2 Parameter 2.
          * @return A new instance of fragment CategoryFragment.
          */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             CategoriesFragment().apply {
@@ -125,12 +132,10 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
-//        val navController = navHostFragment.navController
-
         adapter = CategoryAdapter(this, this)
         binding.rvCategoriesPage.adapter = adapter
         binding.rvCategoriesPage.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvCategoriesPage.setItemViewCacheSize(10000)
 
         categoriesViewModel.allCategories.observe(viewLifecycleOwner){ categories ->
             if(categories.isNotEmpty()){
@@ -138,12 +143,19 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
                     adapter.submitList(it as MutableList<CategoryModel>?)
                 }
             }
+            onQueryTextChange(binding.searchViewCategories.query.toString())
         }
 
         binding.searchViewCategories.setOnQueryTextListener(this)
-        binding.searchViewCategories.isSubmitButtonEnabled = true
+//        binding.searchViewCategories.isSubmitButtonEnabled = true
 
         binding.btnGenerateCategory.setOnClickListener{
+            categoriesViewModel.viewModelScope.launch {
+                for(category in tempCategories){
+                    categoriesViewModel.insertCategory(category)
+                }
+                tempCategories.removeAll(tempCategories)
+            }
             val fragment = AddACategoryFragment()
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
@@ -154,6 +166,16 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
         super.onResume()
         if(binding.searchViewCategories.query.toString().isEmpty()){
             onQueryTextSubmit("")
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        categoriesViewModel.viewModelScope.launch {
+            for(category in tempCategories){
+                categoriesViewModel.insertCategory(category)
+            }
+            tempCategories.removeAll(tempCategories)
         }
     }
 

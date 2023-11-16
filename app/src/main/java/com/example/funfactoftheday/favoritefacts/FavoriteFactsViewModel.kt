@@ -19,6 +19,10 @@ class FavoriteFactsViewModel (private val appRepository: AppRepository): ViewMod
         Timber.e("Inserted ${factModel.factName}")
     }
 
+    fun searchFavoriteFacts(searchQuery:String): LiveData<List<FactModel>>{
+        return appRepository.searchFavoriteFacts(searchQuery).asLiveData()
+    }
+
     class FavoriteFactsViewModelFactory(private val repository: AppRepository): ViewModelProvider.Factory{
         override fun <T: ViewModel> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(FavoriteFactsViewModel::class.java)) {

@@ -52,6 +52,10 @@ interface AppDao {
     fun getFavoriteFacts():Flow<List<FactModel>>
 
     @Transaction
+    @Query("SELECT * FROM fact_table WHERE factName LIKE :searchQuery AND isFavorite = true")
+    fun searchFavoriteFacts(searchQuery: String):Flow<List<FactModel>>
+
+    @Transaction
     @Query("SELECT * FROM category_table WHERE categoryName = :categoryName")
     fun getFactsOfCategories(categoryName: String): Flow<CategoriesWithFacts>
 

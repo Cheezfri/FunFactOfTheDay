@@ -25,6 +25,12 @@ class AppRepository(private val appDao:AppDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
+    suspend fun updateFactTest(factModel: FactModel){
+        appDao.insertFact(factModel)
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
     suspend fun insertCategory(categoryModel: CategoryModel){
         appDao.insertCategory(categoryModel)
     }
@@ -65,6 +71,10 @@ class AppRepository(private val appDao:AppDao) {
 
     fun searchCategoryDatabase(searchQuery: String): Flow<List<CategoryModel>>{
         return appDao.searchCategoryDatabase(searchQuery)
+    }
+
+    fun searchFavoriteFacts(searchQuery: String): Flow<List<FactModel>>{
+        return appDao.searchFavoriteFacts(searchQuery)
     }
 
 //    fun searchFactOfSpecificCategory(searchQuery: String, listToSearch:List<FactModel>): Flow<List<FactModel>>{
