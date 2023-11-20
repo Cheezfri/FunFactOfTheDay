@@ -5,19 +5,18 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
-import com.example.funfactoftheday.databinding.ActivityMainBinding
-import com.example.funfactoftheday.databinding.FragmentAddACategoryBinding
-import com.example.funfactoftheday.databinding.FragmentAddAFactAndCategoryBinding
-import com.example.funfactoftheday.databinding.FragmentAddAFactBinding
+import com.example.funfactoftheday.databinding.*
 import com.example.funfactoftheday.homepage.HomePageViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDialogListener, AddACategoryFragment.NoticeDialogListener, AddAFactFragment.NoticeDialogListener {
+class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDialogListener, AddACategoryFragment.NoticeDialogListener, AddAFactFragment.NoticeDialogListener, DeleteACategoryFragment.NoticeDialogListener {
 
 //    private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
@@ -34,11 +33,7 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavoriteCategory.isChecked))
         viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
         viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
-//        Timber.e("From Main Act: Fact: $isOldFact !!! Category: $isOldCategory")
-    }
-
-//        Timber.e("Positive Click in Homepage: ${binding.etCategoryName.text} and ${binding.etFactName.text}")
-//        Timber.e("Positive Click in Homepage: ${binding.etFactName.text} and ${binding.etCategoryName.text} and ${viewModel.result.value}")
+        }
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddACategoryBinding) {
@@ -55,6 +50,13 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
             viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
             viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), category)
 //            Timber.e("From Main Act:Category: ${binding.etFactName.text} ${binding.cbFavoriteFact.isChecked}")
+        }
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentDeleteACategoryBinding, category: String) {
+        findNavController(R.id.fragmentContainer).navigate(R.id.categoriesFragment)
+        viewModel.viewModelScope.launch {
+            viewModel.deleteCategory(category)
         }
     }
 

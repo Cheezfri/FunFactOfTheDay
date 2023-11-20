@@ -30,6 +30,9 @@ interface AppDao {
     @Query("DELETE FROM CategoryModelCrossRef_table")
     fun deleteCategoryModelCrossRef()
 
+    @Query("DELETE FROM category_table WHERE categoryName =:categoryName")
+    suspend fun deleteCategory(categoryName: String)
+
     @Upsert
     suspend fun insertFact(fact: FactModel)
 

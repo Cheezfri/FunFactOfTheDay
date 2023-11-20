@@ -65,6 +65,12 @@ class AppRepository(private val appDao:AppDao) {
         }
     }
 
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun deleteCategory(categoryName: String){
+        appDao.deleteCategory(categoryName)
+    }
+
     fun searchFactDatabase(searchQuery: String): Flow<List<FactModel>>{
         return appDao.searchFactDatabase(searchQuery)
     }

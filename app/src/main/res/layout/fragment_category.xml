@@ -29,13 +29,23 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
+            android:padding="12dp"
             android:text="No facts added yet. Please add a fact using the button at the bottom of the screen. "
             android:textSize="24sp"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/btnDeleteCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Delete Category?"
+            android:padding="24dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvEmptyList" />
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/searchViewFacts"
@@ -43,6 +53,7 @@
             android:layout_height="wrap_content"
             app:defaultQueryHint="Search For Facts"
             app:iconifiedByDefault="false"
+            android:visibility="visible"
             app:layout_constraintEnd_toStartOf="@+id/btnGenerateFunFact"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/btnGenerateFunFact" />

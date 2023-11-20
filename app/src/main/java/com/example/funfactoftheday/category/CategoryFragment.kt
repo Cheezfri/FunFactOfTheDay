@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.funfactoftheday.AddAFactFragment
+import com.example.funfactoftheday.DeleteACategoryFragment
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.FactsAdapter
 import com.example.funfactoftheday.database.models.CategoryModel
@@ -146,9 +147,13 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
                         currentListOfFacts = itt.facts
                         if(currentListOfFacts.isEmpty()){
                             binding.rvFactsCategoryFragment.visibility = View.INVISIBLE
+                            binding.searchViewFacts.visibility = View.INVISIBLE
+                            binding.btnDeleteCategory.visibility = View.VISIBLE
                             binding.tvEmptyList.visibility = View.VISIBLE
                         } else {
                             binding.rvFactsCategoryFragment.visibility = View.VISIBLE
+                            binding.searchViewFacts.visibility = View.VISIBLE
+                            binding.btnDeleteCategory.visibility = View.INVISIBLE
                             binding.tvEmptyList.visibility = View.INVISIBLE
                             if(isQueryHappening){
                                 searchFactDatabase(currentQuery)
@@ -158,6 +163,11 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
                         }
                     }
                 }
+            }
+
+            binding.btnDeleteCategory.setOnClickListener{
+                val fragment = DeleteACategoryFragment.newInstance(categoryModel.categoryName)
+                fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
             }
 
             binding.searchViewFacts.setOnQueryTextListener(this)

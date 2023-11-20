@@ -42,6 +42,10 @@ class HomePageViewModel (private val appRepository: AppRepository): ViewModel() 
         return appRepository.searchFactDatabase(searchQuery).asLiveData()
     }
 
+    suspend fun deleteCategory(categoryName: String){
+        appRepository.deleteCategory(categoryName)
+    }
+
     class HomePageViewModelFactory(private val repository: AppRepository): ViewModelProvider.Factory{
         override fun <T: ViewModel> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(HomePageViewModel::class.java)) {

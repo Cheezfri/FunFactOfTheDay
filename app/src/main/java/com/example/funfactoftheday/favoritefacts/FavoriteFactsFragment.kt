@@ -124,7 +124,16 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
 
         favoriteFactsViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts ->
             facts.let {
-                adapter.submitList(it as MutableList<FactModel>?)
+                if(it.isEmpty()){
+                    binding.tvEmptyList.visibility = View.VISIBLE
+                    binding.searchViewFacts.visibility = View.INVISIBLE
+                    binding.rvFavoriteFactsPage.visibility = View.INVISIBLE
+                } else {
+                    binding.tvEmptyList.visibility = View.INVISIBLE
+                    binding.searchViewFacts.visibility = View.VISIBLE
+                    binding.rvFavoriteFactsPage.visibility = View.VISIBLE
+                    adapter.submitList(it as MutableList<FactModel>?)
+                }
             }
             onQueryTextChange(binding.searchViewFacts.query.toString())
         }
