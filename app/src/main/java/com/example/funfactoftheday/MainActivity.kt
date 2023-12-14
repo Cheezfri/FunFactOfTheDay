@@ -13,6 +13,7 @@ import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.*
 import com.example.funfactoftheday.homepage.HomePageViewModel
+import com.google.android.material.color.DynamicColors
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -70,7 +71,7 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+        setSupportActionBar(binding.myToolbar)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
 
