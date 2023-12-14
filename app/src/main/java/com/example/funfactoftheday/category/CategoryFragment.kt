@@ -84,11 +84,15 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
 //        }
     }
 
-    override fun onItemClick(itemBinding: FactBinding) {
+    override fun onFavoriteClick(itemBinding: FactBinding) {
         val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
         tempFacts.add(fact)
 //        categoryViewModel.insertFact(fact)
     }
+
+//    override fun onTextClick(itemBinding: FactBinding, holder: FactsAdapter.FactsViewHolder) {
+//        TODO("Not yet implemented")
+//    }
 
     private var param1: String? = null
     private var param2: String? = null

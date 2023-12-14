@@ -15,6 +15,8 @@ class FactsAdapter(
 ) : ListAdapter<FactModel, FactsAdapter.FactsViewHolder>(FactsComparator())
 {
 
+
+
     fun getItemPosition(factName: String?): Int {
         for (i in 0 until this.currentList.size) {
             if (this.currentList[i].factName.contentEquals(factName)) {
@@ -33,16 +35,20 @@ class FactsAdapter(
     //called everytime new row is made
     override fun onBindViewHolder(holder: FactsViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current)
+        holder.bind(current, holder)
     }
 
     class FactsViewHolder(private val itemBinding: FactBinding, private val listener: OnItemClickListener):RecyclerView.ViewHolder(itemBinding.root){
-        fun bind(fact:FactModel){
+        fun bind(fact:FactModel, holder: FactsViewHolder){
             itemBinding.tvFactName.text = fact.factName
             itemBinding.cbFavorite.isChecked = fact.isFavorite
             itemBinding.cbFavorite.setOnClickListener{
-                listener.onItemClick(itemBinding)
+                listener.onFavoriteClick(itemBinding)
             }
+//            itemBinding.tvFactName.setOnTouchListener{ _, _ ->
+//                listener.onTextClick(itemBinding, holder)
+//                return@setOnTouchListener true
+//            }
         }
     }
 
@@ -57,7 +63,8 @@ class FactsAdapter(
     }
 
     interface OnItemClickListener{
-        fun onItemClick(itemBinding:FactBinding)
+        fun onFavoriteClick(itemBinding:FactBinding)
+//        fun onTextClick(itemBinding: FactBinding, holder: FactsViewHolder)
     }
 
 }
