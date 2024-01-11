@@ -2,7 +2,7 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".homepage.HomePageFragment">
+    tools:context=".deletepage.DeleteFactsFragment">
 
     <data>
         <variable
@@ -14,14 +14,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvFactsHomePage"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnGenerateFunFact"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvFactsHomePage"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/btnGenerateFunFact"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/searchViewFacts"
@@ -29,29 +29,21 @@
             android:layout_height="wrap_content"
             app:defaultQueryHint="Search For Facts"
             app:iconifiedByDefault="false"
-            app:layout_constraintEnd_toStartOf="@+id/btnDeleteFact"
+            app:layout_constraintEnd_toStartOf="@+id/btnGenerateFunFact"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/btnDeleteFact" />
+            app:layout_constraintTop_toTopOf="@+id/btnGenerateFunFact" />
+
 
         <Button
             android:id="@+id/btnGenerateFunFact"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Add a Fact"
-            app:layout_constraintTop_toTopOf="@id/btnDeleteFact"
-            app:layout_constraintStart_toStartOf="@id/btnDeleteFact"
-            app:layout_constraintEnd_toEndOf="@id/btnDeleteFact"
-            android:visibility="visible" />
-
-        <Button
-            android:id="@+id/btnDeleteFact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
             android:text="Delete Facts"
-            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/rvFactsHomePage" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

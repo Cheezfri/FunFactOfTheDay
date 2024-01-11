@@ -30,4 +30,9 @@
         android:name="com.example.funfactoftheday.category.CategoryFragment"
         android:label="fragment_category"
         tools:layout="@layout/fragment_category"/>
+    <fragment
+        android:id="@+id/deleteFactsFragment"
+        android:name="com.example.funfactoftheday.deletepage.DeleteFactsFragment"
+        android:label="fragment_delete_facts"
+        tools:layout="@layout/fragment_delete_facts"/>
 </navigation>

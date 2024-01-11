@@ -1,4 +1,4 @@
-package com.example.funfactoftheday.favoritefacts
+package com.example.funfactoftheday.deletepage
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,33 +8,39 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.FactsAdapter
+import com.example.funfactoftheday.R
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
-import com.example.funfactoftheday.databinding.FragmentFavoriteFactsBinding
+import com.example.funfactoftheday.databinding.FragmentDeleteFactsBinding
 import com.example.funfactoftheday.homepage.HomePageViewModel
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
+// TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
- * Use the [FavoriteFactsFragment.newInstance] factory method to
+ * Use the [DeleteFactsFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchView.OnQueryTextListener {
+class DeleteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchView.OnQueryTextListener {
+    // TODO: Rename and change types of parameters
+    private var param1: String? = null
+    private var param2: String? = null
 
-    private lateinit var binding:FragmentFavoriteFactsBinding
+    private lateinit var binding: FragmentDeleteFactsBinding
     private lateinit var adapter: FactsAdapter
-    private var tempFacts:MutableList<FactModel> = mutableListOf()
+    private var factsToFavorite:MutableList<FactModel> = mutableListOf()
+    private var factsToDelete:MutableList<FactModel> = mutableListOf()
 
-    private val favoriteFactsViewModel: FavoriteFactsViewModel by viewModels {
-        FavoriteFactsViewModel.FavoriteFactsViewModelFactory((context?.applicationContext as FactApplication).repository)
+    private val viewModel: HomePageViewModel by viewModels {
+        HomePageViewModel.HomePageViewModelFactory((context?.applicationContext as FactApplication).repository)
     }
 
     override fun onQueryTextSubmit(query: String?): Boolean {
@@ -52,14 +58,8 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
     }
 
     private fun searchFactDatabase(query: String){
-        favoriteFactsViewModel.viewModelScope.launch {
-            for(fact in tempFacts){
-                favoriteFactsViewModel.insertFact(fact)
-            }
-            tempFacts.removeAll(tempFacts)
-        }
         val searchQuery = "%$query%"
-        favoriteFactsViewModel.searchFavoriteFacts(searchQuery).observe(this) { list ->
+        viewModel.searchFactDatabase(searchQuery).observe(this) { list ->
             list.sortedBy { !it.isFavorite }.let {
                 adapter.submitList(it)
             }
@@ -68,20 +68,17 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
 
     override fun onFavoriteClick(itemBinding: FactBinding) {
         val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
-        tempFacts.add(fact)
-//        favoriteFactsViewModel.insertFact(fact)
+        factsToFavorite.add(fact)
     }
 
     override fun onDeleteClick(itemBinding: FactBinding) {
-        TODO("Not yet implemented")
+        val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
+        factsToDelete.add(fact)
     }
 
     override fun onTextHold(itemBinding: FactBinding) {
-        TODO("Not yet implemented")
+        findNavController().popBackStack()
     }
-
-    private var param1: String? = null
-    private var param2: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,13 +89,11 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-
-        binding = FragmentFavoriteFactsBinding.inflate(inflater, container, false)
+        binding = FragmentDeleteFactsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -109,12 +104,12 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
          *
          * @param param1 Parameter 1.
          * @param param2 Parameter 2.
-         * @return A new instance of fragment FavoriteFactsFragment.
+         * @return A new instance of fragment DeleteFactsFragment.
          */
-
+        // TODO: Rename and change types and number of parameters
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
-            FavoriteFactsFragment().apply {
+            DeleteFactsFragment().apply {
                 arguments = Bundle().apply {
                     putString(ARG_PARAM1, param1)
                     putString(ARG_PARAM2, param2)
@@ -126,20 +121,15 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
         super.onViewCreated(view, savedInstanceState)
 
         adapter = FactsAdapter(this)
-        binding.rvFavoriteFactsPage.adapter = adapter
-        binding.rvFavoriteFactsPage.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvFavoriteFactsPage.setItemViewCacheSize(10000)
 
-        favoriteFactsViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts ->
-            facts.let {
-                if(it.isEmpty()){
-                    binding.tvEmptyList.visibility = View.VISIBLE
-                    binding.searchViewFacts.visibility = View.INVISIBLE
-                    binding.rvFavoriteFactsPage.visibility = View.INVISIBLE
-                } else {
-                    binding.tvEmptyList.visibility = View.INVISIBLE
-                    binding.searchViewFacts.visibility = View.VISIBLE
-                    binding.rvFavoriteFactsPage.visibility = View.VISIBLE
+        binding.rvFactsHomePage.adapter = adapter
+        val layoutManager = LinearLayoutManager(requireContext())
+        binding.rvFactsHomePage.layoutManager = layoutManager
+        binding.rvFactsHomePage.setItemViewCacheSize(10000)
+
+        viewModel.allFacts.observe(viewLifecycleOwner){ facts ->
+            if(facts.isNotEmpty()){
+                facts.sortedBy { !it.isFavorite }.let {
                     adapter.submitList(it as MutableList<FactModel>?)
                 }
             }
@@ -147,7 +137,6 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
         }
 
         binding.searchViewFacts.setOnQueryTextListener(this)
-//        binding.searchViewFacts.isSubmitButtonEnabled = true
 
     }
 
@@ -160,11 +149,11 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
 
     override fun onPause() {
         super.onPause()
-        favoriteFactsViewModel.viewModelScope.launch {
-            for(fact in tempFacts){
-                favoriteFactsViewModel.insertFact(fact)
+        viewModel.viewModelScope.launch {
+            for(fact in factsToFavorite){
+                viewModel.insertFact(fact)
             }
-            tempFacts.removeAll(tempFacts)
+            factsToFavorite.removeAll(factsToFavorite)
         }
     }
 

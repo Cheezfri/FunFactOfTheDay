@@ -27,7 +27,18 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvFactName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tvFactName"
-        android:button="@drawable/custom_checkbox" />
+        android:button="@drawable/custom_checkbox_heart"
+        android:visibility="visible"/>
+
+    <CheckBox
+        android:id="@+id/cbDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/tvFactName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvFactName"
+        android:button="@drawable/custom_checkbox_delete"
+        android:visibility="invisible"/>
 
     <View
         app:layout_constraintTop_toBottomOf="@+id/tvFactName"

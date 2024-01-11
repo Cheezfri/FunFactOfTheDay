@@ -27,7 +27,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/tvCategoryName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tvCategoryName"
-        android:button="@drawable/custom_checkbox"/>
+        android:button="@drawable/custom_checkbox_heart"/>
 
     <View
         app:layout_constraintTop_toBottomOf="@+id/tvCategoryName"

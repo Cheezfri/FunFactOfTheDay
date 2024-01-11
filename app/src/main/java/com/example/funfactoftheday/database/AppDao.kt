@@ -33,6 +33,9 @@ interface AppDao {
     @Query("DELETE FROM category_table WHERE categoryName =:categoryName")
     suspend fun deleteCategory(categoryName: String)
 
+    @Query("DELETE FROM fact_table WHERE factName =:factName")
+    suspend fun deleteFact(factName: String)
+
     @Upsert
     suspend fun insertFact(fact: FactModel)
 
@@ -41,6 +44,10 @@ interface AppDao {
 
     @Upsert
     suspend fun insertCategoryModelCrossRef(crossRef: CategoryModelCrossRef)
+
+    @Transaction
+    @Query("UPDATE fact_table SET isDeletable = NOT isDeletable")
+    fun toggleDeletable()
 
     @Transaction
     @Query("SELECT * FROM category_table")
@@ -61,6 +68,10 @@ interface AppDao {
     @Transaction
     @Query("SELECT * FROM category_table WHERE categoryName = :categoryName")
     fun getFactsOfCategories(categoryName: String): Flow<CategoriesWithFacts>
+
+    @Transaction
+    @Query("SELECT EXISTS(SELECT * FROM fact_table WHERE isDeletable = true)")
+    fun returnDeletable(): Boolean
 
     @Transaction
     @Query("SELECT * FROM fact_table WHERE factName = :factName")

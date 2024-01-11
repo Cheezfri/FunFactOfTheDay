@@ -1,14 +1,16 @@
 package com.example.funfactoftheday
 
+import android.graphics.ColorSpace.Model
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
 import timber.log.Timber
+
 
 class FactsAdapter(
     private val listener: OnItemClickListener
@@ -33,15 +35,45 @@ class FactsAdapter(
     //called everytime new row is made
     override fun onBindViewHolder(holder: FactsViewHolder, position: Int) {
         val current = getItem(position)
-        holder.bind(current)
+        if(current.isDeletable){
+            holder.bindDeletable(current)
+        } else {
+            holder.bindFavorite(current)
+        }
     }
 
     class FactsViewHolder(private val itemBinding: FactBinding, private val listener: OnItemClickListener):RecyclerView.ViewHolder(itemBinding.root){
-        fun bind(fact:FactModel){
+        fun bindFavorite(fact:FactModel){
+            Timber.e("bindFavorite Called")
             itemBinding.tvFactName.text = fact.factName
             itemBinding.cbFavorite.isChecked = fact.isFavorite
+            itemBinding.cbFavorite.visibility = View.VISIBLE
+            itemBinding.cbDelete.visibility = View.INVISIBLE
             itemBinding.cbFavorite.setOnClickListener{
-                listener.onItemClick(itemBinding)
+                listener.onFavoriteClick(itemBinding)
+            }
+            itemBinding.tvFactName.setOnLongClickListener{
+                listener.onTextHold(itemBinding)
+                return@setOnLongClickListener true
+            }
+            itemBinding.cbDelete.setOnClickListener{
+                listener.onDeleteClick(itemBinding)
+            }
+        }
+        fun bindDeletable(fact:FactModel){
+            Timber.e("bindDeletable Called")
+            itemBinding.tvFactName.text = fact.factName
+            itemBinding.cbFavorite.visibility = View.INVISIBLE
+            itemBinding.cbDelete.visibility = View.VISIBLE
+            itemBinding.cbFavorite.setOnClickListener{
+                listener.onFavoriteClick(itemBinding)
+            }
+            itemBinding.tvFactName.setOnLongClickListener{
+                listener.onTextHold(itemBinding)
+                return@setOnLongClickListener true
+            }
+            itemBinding.cbDelete.setOnClickListener{
+                listener.onDeleteClick(itemBinding)
             }
         }
     }
@@ -52,12 +84,16 @@ class FactsAdapter(
         }
 
         override fun areContentsTheSame(oldItem: FactModel, newItem: FactModel): Boolean {
-            return (oldItem.factName == newItem.factName && oldItem.isFavorite == newItem.isFavorite)
+            return (oldItem.factName == newItem.factName &&
+                    oldItem.isFavorite == newItem.isFavorite &&
+                    oldItem.isDeletable == newItem.isDeletable)
         }
     }
 
     interface OnItemClickListener{
-        fun onItemClick(itemBinding:FactBinding)
+        fun onFavoriteClick(itemBinding:FactBinding)
+        fun onDeleteClick(itemBinding: FactBinding)
+        fun onTextHold(itemBinding: FactBinding)
     }
 
 }

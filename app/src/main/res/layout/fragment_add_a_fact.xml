@@ -34,7 +34,7 @@
         android:id="@+id/cbFavoriteFact"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:button="@drawable/custom_checkbox"
+        android:button="@drawable/custom_checkbox_heart"
         app:layout_constraintBottom_toBottomOf="@+id/tvFavoriteFact"
         app:layout_constraintEnd_toEndOf="@+id/etFactName"
         app:layout_constraintTop_toTopOf="@+id/tvFavoriteFact" />

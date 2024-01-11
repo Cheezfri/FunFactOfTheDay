@@ -25,12 +25,6 @@ class AppRepository(private val appDao:AppDao) {
 
     @Suppress("RedundantSuspendModifier")
     @WorkerThread
-    suspend fun updateFactTest(factModel: FactModel){
-        appDao.insertFact(factModel)
-    }
-
-    @Suppress("RedundantSuspendModifier")
-    @WorkerThread
     suspend fun insertCategory(categoryModel: CategoryModel){
         appDao.insertCategory(categoryModel)
     }
@@ -69,6 +63,25 @@ class AppRepository(private val appDao:AppDao) {
     @WorkerThread
     suspend fun deleteCategory(categoryName: String){
         appDao.deleteCategory(categoryName)
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun deleteFact(factName: String){
+        appDao.deleteFact(factName)
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun toggleDeletable(){
+        appDao.toggleDeletable()
+    }
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun returnDeletable():Boolean{
+        return withContext(Dispatchers.IO){
+            appDao.returnDeletable()
+        }
     }
 
     fun searchFactDatabase(searchQuery: String): Flow<List<FactModel>>{

@@ -9,13 +9,19 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.funfactoftheday.AddAFactAndCategoryFragment
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.FactsAdapter
+import com.example.funfactoftheday.R
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentHomePageBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -32,7 +38,8 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
 
     private lateinit var binding:FragmentHomePageBinding
     private lateinit var adapter: FactsAdapter
-    private var tempFacts:MutableList<FactModel> = mutableListOf()
+    private var factsToFavorite:MutableList<FactModel> = mutableListOf()
+    private var factsToDelete:MutableList<FactModel> = mutableListOf()
 
     private val homePageViewModel: HomePageViewModel by viewModels {
         HomePageViewModel.HomePageViewModelFactory((context?.applicationContext as FactApplication).repository)
@@ -59,32 +66,57 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
      */
     private fun searchFactDatabase(query: String){
         homePageViewModel.viewModelScope.launch {
-            for(fact in tempFacts){
-                homePageViewModel.insertFact(fact)
+            val isDeletable = homePageViewModel.returnDeletable()
+            for(fact in factsToFavorite){
+                if(isDeletable){
+                    val factToInsert = FactModel(fact.factName, fact.isFavorite, true)
+                    homePageViewModel.insertFact(factToInsert)
+                } else{
+                    val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
+                    homePageViewModel.insertFact(factToInsert)
+                }
+
             }
-            tempFacts.removeAll(tempFacts)
+            factsToFavorite.removeAll(factsToFavorite)
         }
         val searchQuery = "%$query%"
         homePageViewModel.searchFactDatabase(searchQuery).observe(this) { list ->
                 list.sortedBy { !it.isFavorite }.let {
+                    Timber.e("searchQuery is $searchQuery")
                     adapter.submitList(it)
             }
         }
     }
 
-    override fun onItemClick(itemBinding: FactBinding) {
+    override fun onFavoriteClick(itemBinding: FactBinding) {
+        val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked, false)
+        if(factsToFavorite.contains(FactModel(fact.factName, !fact.isFavorite, false))){
+            factsToFavorite.remove(FactModel(fact.factName, !fact.isFavorite, false))
+        }
+        factsToFavorite.add(fact)
+    }
 
-//        position = ((binding.rvFactsHomePage.layoutManager) as LinearLayoutManager).findFirstVisibleItemPosition()
-//        startView = ((binding.rvFactsHomePage.layoutManager) as LinearLayoutManager).getChildAt(0)
-//        topView = if (startView == null) 0 else startView!!.top - binding.rvFactsHomePage.paddingTop
-//        ((binding.rvFactsHomePage.layoutManager) as LinearLayoutManager).scrollToPositionWithOffset(position, topView)
-
+    override fun onDeleteClick(itemBinding: FactBinding) {
         val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
-        tempFacts.add(fact)
-//        homePageViewModel.viewModelScope.launch {
-//            homePageViewModel.insertFact(fact)
-//        }
+        factsToDelete.add(fact)
+    }
 
+    override fun onTextHold(itemBinding: FactBinding) {
+        Timber.e("onTextHold Working")
+
+        CoroutineScope(Dispatchers.IO).launch {
+            homePageViewModel.toggleDeletable()
+            homePageViewModel.viewModelScope.launch {
+                if(homePageViewModel.returnDeletable()){
+                    binding.btnGenerateFunFact.visibility = View.INVISIBLE
+                    binding.btnDeleteFact.visibility = View.VISIBLE
+                } else{
+                    binding.btnGenerateFunFact.visibility = View.VISIBLE
+                    binding.btnDeleteFact.visibility = View.INVISIBLE
+                }
+            }
+        }
+//        findNavController().navigate(R.id.deleteFactsFragment)
     }
 
     private var param1: String? = null
@@ -134,6 +166,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         Timber.plant(Timber.DebugTree())
 
         adapter = FactsAdapter(this)
+        adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
         binding.rvFactsHomePage.adapter = adapter
         val layoutManager = LinearLayoutManager(requireContext())
@@ -148,7 +181,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
             }
             onQueryTextChange(binding.searchViewFacts.query.toString())
         }
-
+        //TODO: Onquerytextchange causes problem with switching layouts, prob beczause
         binding.searchViewFacts.setOnQueryTextListener(this)
 //        binding.searchViewFacts.isSubmitButtonEnabled = true
 
@@ -156,10 +189,18 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
 
         binding.btnGenerateFunFact.setOnClickListener {
             homePageViewModel.viewModelScope.launch {
-                for(fact in tempFacts){
-                    homePageViewModel.insertFact(fact)
+                val isDeletable = homePageViewModel.returnDeletable()
+                for(fact in factsToFavorite){
+                    if(isDeletable){
+                        val factToInsert = FactModel(fact.factName, fact.isFavorite, true)
+                        homePageViewModel.insertFact(factToInsert)
+                    } else{
+                        val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
+                        homePageViewModel.insertFact(factToInsert)
+                    }
+
                 }
-                tempFacts.removeAll(tempFacts)
+                factsToFavorite.removeAll(factsToFavorite)
         }
             val fragment = AddAFactAndCategoryFragment()
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
@@ -170,17 +211,25 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
     override fun onResume() {
         super.onResume()
         if(binding.searchViewFacts.query.toString().isEmpty()){
-            onQueryTextSubmit("")
+            onQueryTextChange("")
         }
     }
 
     override fun onPause() {
         super.onPause()
         homePageViewModel.viewModelScope.launch {
-            for(fact in tempFacts){
-                homePageViewModel.insertFact(fact)
+            val isDeletable = homePageViewModel.returnDeletable()
+            for(fact in factsToFavorite){
+                if(isDeletable){
+                    val factToInsert = FactModel(fact.factName, fact.isFavorite, true)
+                    homePageViewModel.insertFact(factToInsert)
+                } else{
+                    val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
+                    homePageViewModel.insertFact(factToInsert)
+                }
+
             }
-            tempFacts.removeAll(tempFacts)
+            factsToFavorite.removeAll(factsToFavorite)
         }
     }
 

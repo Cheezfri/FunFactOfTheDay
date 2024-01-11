@@ -46,6 +46,19 @@ class HomePageViewModel (private val appRepository: AppRepository): ViewModel() 
         appRepository.deleteCategory(categoryName)
     }
 
+    suspend fun toggleDeletable(){
+        Timber.e("toggleDelete in ViewModel")
+        appRepository.toggleDeletable()
+    }
+
+    suspend fun returnDeletable(): Boolean = viewModelScope.async {
+        return@async appRepository.returnDeletable()
+    }.await()
+
+    suspend fun deleteFact(factName: String){
+        appRepository.deleteFact(factName)
+    }
+
     class HomePageViewModelFactory(private val repository: AppRepository): ViewModelProvider.Factory{
         override fun <T: ViewModel> create(modelClass: Class<T>): T {
             if(modelClass.isAssignableFrom(HomePageViewModel::class.java)) {
