@@ -1,6 +1,7 @@
 package com.example.funfactoftheday.homepage
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,11 +13,9 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.funfactoftheday.AddAFactAndCategoryFragment
-import com.example.funfactoftheday.FactApplication
-import com.example.funfactoftheday.FactsAdapter
-import com.example.funfactoftheday.R
+import com.example.funfactoftheday.*
 import com.example.funfactoftheday.database.models.FactModel
+import com.example.funfactoftheday.database.models.toParcelableArray
 import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentHomePageBinding
 import kotlinx.coroutines.CoroutineScope
@@ -97,8 +96,13 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
     }
 
     override fun onDeleteClick(itemBinding: FactBinding) {
-        val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked)
-        factsToDelete.add(fact)
+        val fact = FactModel(itemBinding.tvFactName.text as String, itemBinding.cbFavorite.isChecked, true)
+        if(factsToDelete.contains(FactModel(fact.factName, fact.isFavorite, true))){
+            factsToDelete.remove(FactModel(fact.factName, fact.isFavorite, true))
+        } else{
+            factsToDelete.add(fact)
+        }
+
     }
 
     override fun onTextHold(itemBinding: FactBinding) {
@@ -206,6 +210,15 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
 
+        binding.btnDeleteFact.setOnClickListener{
+
+            val bundle = Bundle()
+
+//            bundle.putParcelableArray("factsToDelete", factsToDelete.toParcelableArray())
+            val fragment = DeleteFactFragment.newInstance(factsToDelete.toTypedArray())
+            fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
+        }
+
     }
 
     override fun onResume() {
@@ -223,13 +236,21 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
                 if(isDeletable){
                     val factToInsert = FactModel(fact.factName, fact.isFavorite, true)
                     homePageViewModel.insertFact(factToInsert)
+//                    binding.btnGenerateFunFact.visibility = View.INVISIBLE
+//                    binding.btnDeleteFact.visibility = View.VISIBLE
                 } else{
                     val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
                     homePageViewModel.insertFact(factToInsert)
+//                    binding.btnGenerateFunFact.visibility = View.VISIBLE
+//                    binding.btnDeleteFact.visibility = View.INVISIBLE
                 }
-
             }
             factsToFavorite.removeAll(factsToFavorite)
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            if(homePageViewModel.returnDeletable()){
+                homePageViewModel.toggleDeletable()
+            }
         }
     }
 

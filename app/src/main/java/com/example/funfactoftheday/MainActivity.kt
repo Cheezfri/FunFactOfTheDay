@@ -17,7 +17,7 @@ import com.google.android.material.color.DynamicColors
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDialogListener, AddACategoryFragment.NoticeDialogListener, AddAFactFragment.NoticeDialogListener, DeleteACategoryFragment.NoticeDialogListener {
+class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDialogListener, AddACategoryFragment.NoticeDialogListener, AddAFactFragment.NoticeDialogListener, DeleteACategoryFragment.NoticeDialogListener, DeleteFactFragment.NoticeDialogListener {
 
 //    private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
@@ -58,6 +58,17 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         findNavController(R.id.fragmentContainer).navigate(R.id.categoriesFragment)
         viewModel.viewModelScope.launch {
             viewModel.deleteCategory(category)
+        }
+    }
+
+    override fun onDialogPositiveClick(dialog: DialogFragment, toDelete: Array<FactModel>?) {
+        viewModel.viewModelScope.launch {
+            if (toDelete != null) {
+                for(fact in toDelete){
+                    viewModel.deleteFact(fact.factName)
+                }
+            }
+            findNavController(R.id.fragmentContainer).navigate(R.id.homePageFragment)
         }
     }
 

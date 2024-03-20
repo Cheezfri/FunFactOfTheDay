@@ -73,11 +73,11 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
     }
 
     override fun onDeleteClick(itemBinding: FactBinding) {
-        TODO("Not yet implemented")
+
     }
 
     override fun onTextHold(itemBinding: FactBinding) {
-        TODO("Not yet implemented")
+
     }
 
     private var param1: String? = null
