@@ -31,7 +31,7 @@ class HomePageViewModel (private val appRepository: AppRepository): ViewModel() 
     }
 
     suspend fun doesFactExist(factName: String): Boolean = viewModelScope.async {
-        return@async appRepository.doesFactExist(factName)
+        return@async appRepository.doesFactExist (factName)
     }.await()
 
     suspend fun doesCategoryExist(categoryName: String): Boolean = viewModelScope.async {

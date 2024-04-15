@@ -10,6 +10,7 @@ import com.example.funfactoftheday.database.reletions.CategoryModelCrossRef
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 
 class AppRepository(private val appDao:AppDao) {
 
@@ -83,6 +84,16 @@ class AppRepository(private val appDao:AppDao) {
             appDao.returnDeletable()
         }
     }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun getFavoriteCategories():List<CategoryModel> {
+        return withContext(Dispatchers.IO){
+            appDao.getFavoriteCategories()
+        }
+    }
+
+    //TODO: make returnAllFactsFromFavoriteCategories
 
     fun searchFactDatabase(searchQuery: String): Flow<List<FactModel>>{
         return appDao.searchFactDatabase(searchQuery)

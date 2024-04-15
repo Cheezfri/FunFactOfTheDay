@@ -74,6 +74,10 @@ interface AppDao {
     fun returnDeletable(): Boolean
 
     @Transaction
+    @Query("SELECT * FROM category_table WHERE isFavorite = true")
+    suspend fun getFavoriteCategories():List<CategoryModel>
+
+    @Transaction
     @Query("SELECT * FROM fact_table WHERE factName = :factName")
     fun getCategoriesOfFacts(factName: String): Flow<FactsWithCategories>
 

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="what_kind_notifications_array">
+        <item>All Facts</item>
+        <item>Favorite Facts Only</item>
+        <item>Favorite Categories Only</item>
+    </string-array>
+</resources>

@@ -6,12 +6,15 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import androidx.fragment.app.viewModels
+import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.MainActivity
 import com.example.funfactoftheday.R
 
 class FunFactNotificationService(
     private val context: Context
 ){
+
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 

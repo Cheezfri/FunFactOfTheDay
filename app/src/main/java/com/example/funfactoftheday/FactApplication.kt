@@ -25,6 +25,7 @@ class FactApplication: Application() {
         super.onCreate()
         DynamicColors.applyToActivitiesIfAvailable(this)
         createNotificationChannel()
+
     }
 
     private fun createNotificationChannel(){

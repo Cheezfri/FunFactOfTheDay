@@ -44,7 +44,6 @@ class FactsAdapter(
 
     class FactsViewHolder(private val itemBinding: FactBinding, private val listener: OnItemClickListener):RecyclerView.ViewHolder(itemBinding.root){
         fun bindFavorite(fact:FactModel){
-            Timber.e("bindFavorite Called")
             itemBinding.tvFactName.text = fact.factName
             itemBinding.cbFavorite.isChecked = fact.isFavorite
             itemBinding.cbFavorite.visibility = View.VISIBLE
@@ -61,7 +60,6 @@ class FactsAdapter(
             }
         }
         fun bindDeletable(fact:FactModel){
-            Timber.e("bindDeletable Called")
             itemBinding.tvFactName.text = fact.factName
             itemBinding.cbFavorite.visibility = View.INVISIBLE
             itemBinding.cbDelete.visibility = View.VISIBLE

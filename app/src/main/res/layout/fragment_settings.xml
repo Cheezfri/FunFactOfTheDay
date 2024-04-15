@@ -8,11 +8,89 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/button"
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:text="Control How Often We Send you Fun Fact Notifications"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvEnableNotifications"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="Enable Notifications:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switchEnableNotifications"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:minHeight="48dp"
+            android:paddingLeft="48dp"
+            android:paddingEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvEnableNotifications"
+            app:layout_constraintStart_toEndOf="@+id/tvEnableNotifications"
+            app:layout_constraintTop_toTopOf="@+id/tvEnableNotifications" />
+
+        <TextView
+            android:id="@+id/tvHowOftenNotifications"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="How Often Should we Send Notifications?:"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@+id/tvEnableNotifications"
+            app:layout_constraintStart_toStartOf="@+id/tvEnableNotifications"
+            app:layout_constraintTop_toBottomOf="@+id/tvEnableNotifications" />
+
+        <Spinner
+            android:id="@+id/spinnerHowOftenNotifications"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvHowOftenNotifications"
+            app:layout_constraintEnd_toEndOf="@+id/switchEnableNotifications"
+            app:layout_constraintStart_toStartOf="@+id/switchEnableNotifications"
+            app:layout_constraintTop_toTopOf="@+id/tvHowOftenNotifications" />
+
+        <TextView
+            android:id="@+id/tvWhatKindFunFactsSend"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="What kind of Fun Facts Do You Want Sent?:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="@+id/tvHowOftenNotifications"
+            app:layout_constraintStart_toStartOf="@+id/tvHowOftenNotifications"
+            app:layout_constraintTop_toBottomOf="@+id/tvHowOftenNotifications" />
+
+        <Spinner
+            android:id="@+id/spinnerWhatKindFunFactsSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            app:layout_constraintBottom_toBottomOf="@+id/tvWhatKindFunFactsSend"
+            app:layout_constraintStart_toEndOf="@+id/tvWhatKindFunFactsSend"
+            app:layout_constraintStart_toStartOf="@+id/spinnerHowOftenNotifications"
+            app:layout_constraintTop_toBottomOf="@+id/tvHowOftenNotifications" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

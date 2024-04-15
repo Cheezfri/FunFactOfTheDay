@@ -1,6 +1,7 @@
 package com.example.funfactoftheday.database
 
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -10,6 +11,7 @@ import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.database.reletions.CategoryModelCrossRef
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 @Database(
@@ -72,7 +74,6 @@ abstract class AppDatabase : RoomDatabase() {
             FactModel("Three dogs survived the Titanic sinking."),
             FactModel("Dogs have three eyelids."),
 
-
         )
 
         val testCategories = mutableListOf(
@@ -125,7 +126,6 @@ abstract class AppDatabase : RoomDatabase() {
         testCategories.forEach{appDao.insertCategory(it)}
         factCategoryRelations.forEach{appDao.insertCategoryModelCrossRef(it)}
 
-//        Timber.e(appDao.doesFactExist("The World Is Flat!!!!").toString())
     }
 
     companion object {

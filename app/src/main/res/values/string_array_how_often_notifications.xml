@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="how_often_notifications_array">
+        <item>Twice A Day</item>
+        <item>Daily</item>
+        <item>Twice a Week</item>
+        <item>Weekly</item>
+    </string-array>
+</resources>
