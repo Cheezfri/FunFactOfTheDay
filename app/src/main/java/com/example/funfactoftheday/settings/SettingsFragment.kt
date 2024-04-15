@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
 import com.example.funfactoftheday.DataBinderMapperImpl
@@ -105,6 +107,36 @@ class SettingsFragment : Fragment() {
             binding.spinnerHowOftenNotifications.adapter = adapter
         }
 
+        var isFavoriteFactsEmpty = true
+        settingsPageViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts ->
+            isFavoriteFactsEmpty = facts.isNullOrEmpty()
+        }
+
+        binding.switchEnableNotifications.setOnClickListener{
+            if(binding.switchEnableNotifications.isChecked && (binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Facts Only") && isFavoriteFactsEmpty){
+                Timber.e("Working Checking")
+                Toast.makeText(requireContext(), "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!", Toast.LENGTH_LONG).show()
+            }
+        }
+
+        binding.spinnerWhatKindFunFactsSend.onItemSelectedListener = object:AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                if(p0!!.selectedItem.toString() == "Favorite Facts Only" && binding.switchEnableNotifications.isChecked && isFavoriteFactsEmpty){
+                    Toast.makeText(requireContext(), "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!", Toast.LENGTH_LONG).show()
+                }
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+
+            }
+
+        }
+
+        if(binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Facts Only" && binding.switchEnableNotifications.isChecked){
+            Timber.e("Working Checking")
+            Toast.makeText(requireContext(), "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!", Toast.LENGTH_LONG).show()
+        }
+
 //        binding.switchEnableNotifications.setOnClickListener{
 //            alarmItem = AlarmItem(
 //                time = LocalDateTime.now().plusSeconds(10.toLong()),
@@ -131,24 +163,44 @@ class SettingsFragment : Fragment() {
 
         Timber.e("Enabled: $enabled || How Often: $howOften || What Kind: $whatKind")
 
-        settingsPageViewModel.allFacts.observe(viewLifecycleOwner){ facts->
-            var factToShow= ""
-            val transformedFacts:MutableList<String> = mutableListOf()
-            if(facts.isNotEmpty()){
-                for(fact in facts){
-                    transformedFacts.add(fact.factName)
+        if(whatKind == "All Facts"){
+            settingsPageViewModel.allFacts.observe(viewLifecycleOwner){ facts->
+                val transformedFacts:MutableList<String> = mutableListOf()
+                if(!facts.isNullOrEmpty()){
+                    for(fact in facts){
+                        transformedFacts.add(fact.factName)
+                    }
+                }
+                if (!transformedFacts.isNullOrEmpty()) {
+                    if(enabled){
+                        alarmItem = AlarmItem(
+                            time = LocalDateTime.now().plusSeconds(5.toLong()),
+                            messages = transformedFacts.toTypedArray())
+                        alarmItem?.let(scheduler::schedule)
+                    }
                 }
             }
-            if (facts.randomOrNull() != null) {
-                if(enabled){
-                    alarmItem = AlarmItem(
-                        time = LocalDateTime.now().plusSeconds(10.toLong()),
-                        messages = transformedFacts.toTypedArray())
-                    alarmItem?.let(scheduler::schedule)
-                }
-            }
-
         }
+        //favoritefacts might be null
+        if(whatKind == "Favorite Facts Only"){
+            settingsPageViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts->
+                val transformedFacts:MutableList<String> = mutableListOf()
+                if(!facts.isNullOrEmpty()){
+                    for(fact in facts){
+                        transformedFacts.add(fact.factName)
+                    }
+                }
+                if (!transformedFacts.isNullOrEmpty()) {
+                    if(enabled){
+                        alarmItem = AlarmItem(
+                            time = LocalDateTime.now().plusSeconds(5.toLong()),
+                            messages = transformedFacts.toTypedArray())
+                        alarmItem?.let(scheduler::schedule)
+                    }
+                }
+            }
+        }
+
     }
 
 }

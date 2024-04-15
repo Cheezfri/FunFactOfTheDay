@@ -14,6 +14,7 @@ import com.example.funfactoftheday.notifications.NotificationsViewModel
 class SettingsPageViewModel(private val appRepository: AppRepository):ViewModel() {
 
     val allFacts: LiveData<List<FactModel>> = appRepository.allFacts.asLiveData()
+    val favoriteFacts:LiveData<List<FactModel>> = appRepository.favoriteFacts.asLiveData()
 
 //    fun returnFavoriteCategories(): LiveData<List<CategoryModel>>{
 //        return appRepository.returnFavoriteCategories().asLiveData()
