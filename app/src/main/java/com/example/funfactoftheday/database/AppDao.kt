@@ -50,6 +50,10 @@ interface AppDao {
     fun toggleDeletable()
 
     @Transaction
+    @Query("SELECT EXISTS(SELECT * FROM fact_table WHERE isDeletable = true)")
+    fun returnDeletable(): Boolean
+
+    @Transaction
     @Query("SELECT * FROM category_table")
     fun getAllCategories(): Flow<List<CategoryModel>>
 
@@ -70,8 +74,8 @@ interface AppDao {
     fun getFactsOfCategories(categoryName: String): Flow<CategoriesWithFacts>
 
     @Transaction
-    @Query("SELECT EXISTS(SELECT * FROM fact_table WHERE isDeletable = true)")
-    fun returnDeletable(): Boolean
+    @Query("SELECT * FROM category_table WHERE isFavorite = true")
+    fun getFactsOfFavoriteCategories(): Flow<List<CategoriesWithFacts>>
 
     @Transaction
     @Query("SELECT * FROM category_table WHERE isFavorite = true")

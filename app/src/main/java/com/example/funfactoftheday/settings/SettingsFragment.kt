@@ -11,13 +11,16 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewModelScope
 import com.example.funfactoftheday.DataBinderMapperImpl
 import com.example.funfactoftheday.FactApplication
 import com.example.funfactoftheday.R
+import com.example.funfactoftheday.database.models.CategoriesWithFacts
 import com.example.funfactoftheday.databinding.FragmentSettingsBinding
 import com.example.funfactoftheday.notifications.AlarmItem
 import com.example.funfactoftheday.notifications.AndroidAlarmScheduler
 import com.example.funfactoftheday.notifications.FunFactNotificationService
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
 
@@ -31,6 +34,9 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class SettingsFragment : Fragment() {
+
+    //TODO: Spinner needs to remember its position, sharedpref prob,
+    // needs to see notifications fully. gets cuttoff
 
     private var param1: String? = null
     private var param2: String? = null
@@ -127,7 +133,6 @@ class SettingsFragment : Fragment() {
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-
             }
 
         }
@@ -159,20 +164,20 @@ class SettingsFragment : Fragment() {
         val enabled = binding.switchEnableNotifications.isChecked
         val service = FunFactNotificationService(requireContext())
         var alarmItem: AlarmItem? = null
-        val scheduler = AndroidAlarmScheduler(requireContext(), 60000 )
+        val scheduler = AndroidAlarmScheduler(requireContext(), 10000 )
 
         Timber.e("Enabled: $enabled || How Often: $howOften || What Kind: $whatKind")
 
-        if(whatKind == "All Facts"){
-            settingsPageViewModel.allFacts.observe(viewLifecycleOwner){ facts->
-                val transformedFacts:MutableList<String> = mutableListOf()
-                if(!facts.isNullOrEmpty()){
-                    for(fact in facts){
-                        transformedFacts.add(fact.factName)
+        if(enabled){
+            if(whatKind == "All Facts"){
+                settingsPageViewModel.allFacts.observe(viewLifecycleOwner){ facts->
+                    val transformedFacts:MutableList<String> = mutableListOf()
+                    if(!facts.isNullOrEmpty()){
+                        for(fact in facts){
+                            transformedFacts.add(fact.factName)
+                        }
                     }
-                }
-                if (!transformedFacts.isNullOrEmpty()) {
-                    if(enabled){
+                    if (!transformedFacts.isNullOrEmpty()) {
                         alarmItem = AlarmItem(
                             time = LocalDateTime.now().plusSeconds(5.toLong()),
                             messages = transformedFacts.toTypedArray())
@@ -180,18 +185,16 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
-        }
-        //favoritefacts might be null
-        if(whatKind == "Favorite Facts Only"){
-            settingsPageViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts->
-                val transformedFacts:MutableList<String> = mutableListOf()
-                if(!facts.isNullOrEmpty()){
-                    for(fact in facts){
-                        transformedFacts.add(fact.factName)
+
+            if(whatKind == "Favorite Facts Only"){
+                settingsPageViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts->
+                    val transformedFacts:MutableList<String> = mutableListOf()
+                    if(!facts.isNullOrEmpty()){
+                        for(fact in facts){
+                            transformedFacts.add(fact.factName)
+                        }
                     }
-                }
-                if (!transformedFacts.isNullOrEmpty()) {
-                    if(enabled){
+                    if (!transformedFacts.isNullOrEmpty()) {
                         alarmItem = AlarmItem(
                             time = LocalDateTime.now().plusSeconds(5.toLong()),
                             messages = transformedFacts.toTypedArray())
@@ -199,7 +202,36 @@ class SettingsFragment : Fragment() {
                     }
                 }
             }
+
+            if(whatKind == "Favorite Categories Only"){
+                settingsPageViewModel.viewModelScope.launch {
+                    val transformedFacts:MutableList<String> = mutableListOf()
+                    settingsPageViewModel.getFactsOfFavoriteCategories()
+                    settingsPageViewModel.getFactsOfFavoriteCategories().observe(viewLifecycleOwner){ items ->
+                        val list: List<CategoriesWithFacts> = items
+                        for(item in list){
+                            Timber.e("Category: ${item.category.categoryName}")
+                            for(fact in item.facts){
+                                if(!transformedFacts.contains(fact.factName)){
+                                    transformedFacts.add(fact.factName)
+                                    Timber.e("Fact: ${fact.factName}")
+                                }
+                            }
+                        }
+                        if (!transformedFacts.isNullOrEmpty()) {
+                            for(fact in transformedFacts){
+                                Timber.e("TF: $fact")
+                            }
+                            alarmItem = AlarmItem(
+                                time = LocalDateTime.now().plusSeconds(5.toLong()),
+                                messages = transformedFacts.toTypedArray())
+                            alarmItem?.let(scheduler::schedule)
+                        }
+                    }
+                }
+            }
         }
+
 
     }
 

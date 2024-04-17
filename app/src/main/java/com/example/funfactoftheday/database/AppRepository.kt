@@ -9,6 +9,7 @@ import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.database.reletions.CategoryModelCrossRef
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -57,6 +58,14 @@ class AppRepository(private val appDao:AppDao) {
     suspend fun getFactsOfCategories(categoryModel: CategoryModel): LiveData<CategoriesWithFacts>{
         return withContext(Dispatchers.IO){
             appDao.getFactsOfCategories(categoryModel.categoryName).asLiveData()
+        }
+    }
+
+    @Suppress("RedundantSuspendModifier")
+    @WorkerThread
+    suspend fun getFactsOfFavoriteCategories(): LiveData<List<CategoriesWithFacts>>{
+        return withContext(Dispatchers.IO){
+            appDao.getFactsOfFavoriteCategories().asLiveData()
         }
     }
 
