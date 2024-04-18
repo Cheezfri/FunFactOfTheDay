@@ -1,5 +1,6 @@
 package com.example.funfactoftheday.settings
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -85,13 +86,15 @@ class SettingsFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Timber.e("onViewCreated")
 
 //        val service = FunFactNotificationService(requireContext())
 //        binding.button.setOnClickListener {
 //            service.showNotification(factName = "first Notification!!!!!!!!!!!")
 //        }
-        val scheduler = AndroidAlarmScheduler(requireContext(),60000 )
-        var alarmItem: AlarmItem? = null
+
+        val sharedPref = requireContext().getSharedPreferences("SettingsSpinnerSharedPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
 
         ArrayAdapter.createFromResource(
             requireContext(),
@@ -113,28 +116,76 @@ class SettingsFragment : Fragment() {
             binding.spinnerHowOftenNotifications.adapter = adapter
         }
 
+        val whatKind = sharedPref.getInt("what_kind", 0)
+        val howOften = sharedPref.getInt("how_often", 0)
+        val isEnabled = sharedPref.getBoolean("enable_notifications", false)
+        Timber.e("enable: $isEnabled !! WhatKindAfter: $whatKind !! howOften: $howOften")
+        binding.spinnerHowOftenNotifications.setSelection(howOften)
+        binding.spinnerWhatKindFunFactsSend.setSelection(whatKind)
+        binding.switchEnableNotifications.isChecked = isEnabled
+
         var isFavoriteFactsEmpty = true
+        var isFavoriteCategoriesEmpty = true
         settingsPageViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts ->
             isFavoriteFactsEmpty = facts.isNullOrEmpty()
         }
+        settingsPageViewModel.viewModelScope.launch {
+            settingsPageViewModel.getFactsOfFavoriteCategories().observe(viewLifecycleOwner){ it ->
+                isFavoriteCategoriesEmpty = it.isEmpty()
+            }
+        }
+
 
         binding.switchEnableNotifications.setOnClickListener{
-            if(binding.switchEnableNotifications.isChecked && (binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Facts Only") && isFavoriteFactsEmpty){
+            if(binding.switchEnableNotifications.isChecked &&
+                (binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Facts Only") &&
+                isFavoriteFactsEmpty){
                 Timber.e("Working Checking")
-                Toast.makeText(requireContext(), "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!", Toast.LENGTH_LONG).show()
+                Toast.makeText(requireContext(),
+                    "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!",
+                    Toast.LENGTH_LONG).show()
+            }
+            if(binding.switchEnableNotifications.isChecked &&
+                    binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Categories Only" &&
+                        isFavoriteCategoriesEmpty
+                    ){
+                Toast.makeText(requireContext(), "Favorite Categories are empty! Please add Favorite Categories or switch to All Facts!", Toast.LENGTH_LONG).show()
+            }
+            editor.apply{
+                putBoolean("enable_notifications", binding.switchEnableNotifications.isChecked)
+                apply()
             }
         }
 
         binding.spinnerWhatKindFunFactsSend.onItemSelectedListener = object:AdapterView.OnItemSelectedListener{
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                if(p0!!.selectedItem.toString() == "Favorite Facts Only" && binding.switchEnableNotifications.isChecked && isFavoriteFactsEmpty){
+                if(p0!!.selectedItem.toString() == "Favorite Facts Only" &&
+                    binding.switchEnableNotifications.isChecked && isFavoriteFactsEmpty){
                     Toast.makeText(requireContext(), "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!", Toast.LENGTH_LONG).show()
+                }
+                if(p0!!.selectedItem.toString() == "Favorite Categories Only" &&
+                    binding.switchEnableNotifications.isChecked && isFavoriteCategoriesEmpty){
+                    Toast.makeText(requireContext(), "Favorite Categories are empty! Please add Favorite Categories or switch to All Facts!", Toast.LENGTH_LONG).show()
+                }
+                editor.apply{
+                    putInt("what_kind", p2)
+                    apply()
+                }
+            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+            }
+        }
+
+        binding.spinnerHowOftenNotifications.onItemSelectedListener = object: AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                editor.apply{
+                    putInt("how_often", p2)
+                    apply()
                 }
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
-
         }
 
         if(binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Facts Only" && binding.switchEnableNotifications.isChecked){
@@ -142,29 +193,28 @@ class SettingsFragment : Fragment() {
             Toast.makeText(requireContext(), "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!", Toast.LENGTH_LONG).show()
         }
 
-//        binding.switchEnableNotifications.setOnClickListener{
-//            alarmItem = AlarmItem(
-//                time = LocalDateTime.now().plusSeconds(10.toLong()),
-//                message = "Alarm is working, time was 10 seconds")
-//            alarmItem?.let(scheduler::schedule)
-//        }
-//
-//        binding.tvEnableNotifications.setOnClickListener{
-//            alarmItem?.let(scheduler::cancel)
-//        }
-
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onPause() {
-
         super.onPause()
+        Timber.e("onPause")
         val howOften = binding.spinnerHowOftenNotifications.selectedItem.toString()
         val whatKind = binding.spinnerWhatKindFunFactsSend.selectedItem.toString()
         val enabled = binding.switchEnableNotifications.isChecked
-        val service = FunFactNotificationService(requireContext())
         var alarmItem: AlarmItem? = null
         val scheduler = AndroidAlarmScheduler(requireContext(), 10000 )
+        val sharedPref = requireContext().getSharedPreferences("SettingsSpinnerSharedPreferences", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+
+//        val whatKindSpinner = sharedPref.getInt("what_kind", 0)
+//        val howOftenSpinner = sharedPref.getInt("how_often", 0)
+//        val isEnabledSwitch = sharedPref.getBoolean("enable_notifications", false)
+//        Timber.e("enable: $isEnabledSwitch !! WhatKindAfter: $whatKindSpinner !! howOften: $howOftenSpinner")
+//        binding.spinnerHowOftenNotifications.setSelection(howOftenSpinner)
+//        binding.spinnerWhatKindFunFactsSend.setSelection(whatKindSpinner)
+//        binding.switchEnableNotifications.isChecked = isEnabledSwitch
 
         Timber.e("Enabled: $enabled || How Often: $howOften || What Kind: $whatKind")
 
@@ -233,6 +283,11 @@ class SettingsFragment : Fragment() {
         }
 
 
+//        editor.apply{
+//            putBoolean("enable_notifications", binding.switchEnableNotifications.isChecked)
+//            putInt("what_kind", binding.spinnerWhatKindFunFactsSend.selectedItemPosition)
+//            putInt("how_often", binding.spinnerHowOftenNotifications.selectedItemPosition)
+//        }
     }
 
 }
