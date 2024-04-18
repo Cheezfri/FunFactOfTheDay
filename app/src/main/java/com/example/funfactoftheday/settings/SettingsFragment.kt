@@ -124,8 +124,8 @@ class SettingsFragment : Fragment() {
         binding.spinnerWhatKindFunFactsSend.setSelection(whatKind)
         binding.switchEnableNotifications.isChecked = isEnabled
 
-        var isFavoriteFactsEmpty = true
-        var isFavoriteCategoriesEmpty = true
+        var isFavoriteFactsEmpty = false
+        var isFavoriteCategoriesEmpty = false
         settingsPageViewModel.favoriteFacts.observe(viewLifecycleOwner){ facts ->
             isFavoriteFactsEmpty = facts.isNullOrEmpty()
         }
@@ -140,7 +140,6 @@ class SettingsFragment : Fragment() {
             if(binding.switchEnableNotifications.isChecked &&
                 (binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Facts Only") &&
                 isFavoriteFactsEmpty){
-                Timber.e("Working Checking")
                 Toast.makeText(requireContext(),
                     "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!",
                     Toast.LENGTH_LONG).show()
@@ -186,11 +185,6 @@ class SettingsFragment : Fragment() {
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
             }
-        }
-
-        if(binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Facts Only" && binding.switchEnableNotifications.isChecked){
-            Timber.e("Working Checking")
-            Toast.makeText(requireContext(), "Favorite Facts are empty! Please add Favorite Facts or switch to All Facts!", Toast.LENGTH_LONG).show()
         }
 
     }
