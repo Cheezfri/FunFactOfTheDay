@@ -110,7 +110,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
                 }
             }
         }
-//        findNavController().navigate(R.id.deleteFactsFragment)
     }
 
     private var param1: String? = null
@@ -202,7 +201,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         binding.btnDeleteFact.setOnClickListener{
             val fragment = DeleteFactFragment.newInstance(
                 factsToDelete.toTypedArray(),
-                "69"
+                ""
             )
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
@@ -211,6 +210,20 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
 
     override fun onResume() {
         super.onResume()
+        CoroutineScope(Dispatchers.IO).launch {
+            if(homePageViewModel.returnDeletable()){
+                homePageViewModel.toggleDeletable()
+            }
+            homePageViewModel.viewModelScope.launch {
+                if(homePageViewModel.returnDeletable()){
+                    binding.btnGenerateFunFact.visibility = View.INVISIBLE
+                    binding.btnDeleteFact.visibility = View.VISIBLE
+                } else{
+                    binding.btnGenerateFunFact.visibility = View.VISIBLE
+                    binding.btnDeleteFact.visibility = View.INVISIBLE
+                }
+            }
+        }
         if(binding.searchViewFacts.query.toString().isEmpty()){
             onQueryTextChange("")
         }
@@ -234,11 +247,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
                 }
             }
             factsToFavorite.removeAll(factsToFavorite)
-        }
-        CoroutineScope(Dispatchers.IO).launch {
-            if(homePageViewModel.returnDeletable()){
-                homePageViewModel.toggleDeletable()
-            }
         }
     }
 

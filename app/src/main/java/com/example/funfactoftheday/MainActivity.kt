@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
                 }
             }
             Timber.e("category: $categoryName")
-            if(categoryName != "69"){
+            if(categoryName != ""){
                 val categoryModel = CategoryModel(categoryName)
                 val bundle = Bundle()
                 bundle.putParcelable("categoryModel", categoryModel)

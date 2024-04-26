@@ -224,9 +224,24 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
             val fragment = DeleteFactFragment.newInstance(factsToDelete.toTypedArray(), categoryModel.categoryName)
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
+    }
 
-
-
+    override fun onResume() {
+        super.onResume()
+        CoroutineScope(Dispatchers.IO).launch {
+            if(categoryViewModel.returnDeletable()){
+                categoryViewModel.toggleDeletable()
+            }
+            categoryViewModel.viewModelScope.launch {
+                if(categoryViewModel.returnDeletable()){
+                    binding.btnGenerateFunFact.visibility = View.INVISIBLE
+                    binding.btnDeleteFact.visibility = View.VISIBLE
+                } else{
+                    binding.btnGenerateFunFact.visibility = View.VISIBLE
+                    binding.btnDeleteFact.visibility = View.INVISIBLE
+                }
+            }
+        }
     }
 
     override fun onPause() {
@@ -248,19 +263,6 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
             }
             factsToFavorite.removeAll(factsToFavorite)
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            if(categoryViewModel.returnDeletable()){
-                categoryViewModel.toggleDeletable()
-                categoryViewModel.toggleDeletable()
-            }
-        }
     }
-
-//    override fun onResume() {
-//        super.onResume()
-//        if(binding.searchViewFacts.query.toString().isEmpty()){
-//            onQueryTextSubmit("")
-//        }
-//    }
 
 }
