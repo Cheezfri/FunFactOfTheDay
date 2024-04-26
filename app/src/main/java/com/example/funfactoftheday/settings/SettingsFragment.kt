@@ -1,5 +1,6 @@
 package com.example.funfactoftheday.settings
 
+import android.app.AlarmManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -198,19 +199,16 @@ class SettingsFragment : Fragment() {
         val whatKind = binding.spinnerWhatKindFunFactsSend.selectedItem.toString()
         val enabled = binding.switchEnableNotifications.isChecked
         var alarmItem: AlarmItem? = null
-        val scheduler = AndroidAlarmScheduler(requireContext(), 10000 )
         val sharedPref = requireContext().getSharedPreferences("SettingsSpinnerSharedPreferences", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
 
-//        val whatKindSpinner = sharedPref.getInt("what_kind", 0)
-//        val howOftenSpinner = sharedPref.getInt("how_often", 0)
-//        val isEnabledSwitch = sharedPref.getBoolean("enable_notifications", false)
-//        Timber.e("enable: $isEnabledSwitch !! WhatKindAfter: $whatKindSpinner !! howOften: $howOftenSpinner")
-//        binding.spinnerHowOftenNotifications.setSelection(howOftenSpinner)
-//        binding.spinnerWhatKindFunFactsSend.setSelection(whatKindSpinner)
-//        binding.switchEnableNotifications.isChecked = isEnabledSwitch
-
-        Timber.e("Enabled: $enabled || How Often: $howOften || What Kind: $whatKind")
+        val interval = when (howOften){
+            "Twice A Day" -> AlarmManager.INTERVAL_HALF_DAY
+            "Daily" -> AlarmManager.INTERVAL_DAY
+            "Twice a Week" -> AlarmManager.INTERVAL_DAY * 3
+            "Weekly" -> AlarmManager.INTERVAL_DAY * 6
+            else -> AlarmManager.INTERVAL_DAY
+        }
+        val scheduler = AndroidAlarmScheduler(requireContext(), interval)
 
         if(enabled){
             if(whatKind == "All Facts"){

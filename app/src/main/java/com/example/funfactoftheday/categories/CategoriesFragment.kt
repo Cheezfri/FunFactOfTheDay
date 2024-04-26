@@ -13,11 +13,13 @@ import androidx.fragment.app.setFragmentResult
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.funfactoftheday.*
+import com.example.funfactoftheday.category.CategoryFragment
 import com.example.funfactoftheday.database.AppDao
 import com.example.funfactoftheday.database.AppDatabase
 import com.example.funfactoftheday.database.models.CategoryModel
@@ -85,8 +87,8 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
         val categoryModel = CategoryModel(itemBinding.tvCategoryName.text.toString(), itemBinding.cbFavorite.isChecked)
         val bundle = Bundle()
         bundle.putParcelable("categoryModel", categoryModel)
-        setFragmentResult("CategoriesToCategoryRequestKey", bundleOf("CategoriesToCategoryBundleKey" to bundle))
-        findNavController().navigate(R.id.categoryFragment)
+        findNavController().navigate(CategoriesFragmentDirections.actionCategoriesFragmentToCategoryFragment(categoryModel))
+//        setFragmentResult("CategoriesToCategoryRequestKey", bundleOf("CategoriesToCategoryBundleKey" to bundle))
     }
 
 

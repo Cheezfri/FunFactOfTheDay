@@ -5,19 +5,17 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.os.Parcelable
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
-import com.example.funfactoftheday.databinding.FragmentAddAFactAndCategoryBinding
 import com.example.funfactoftheday.databinding.FragmentDeleteFactBinding
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
 
 /**
  * A simple [Fragment] subclass.
@@ -27,13 +25,14 @@ private const val ARG_PARAM1 = "param1"
 class DeleteFactFragment : DialogFragment() {
     // TODO: Rename and change types of parameters
     private var toDelete: Array<FactModel>? = null
+    private var categoryName: String = ""
 
     internal lateinit var listener: NoticeDialogListener
     private var _binding: FragmentDeleteFactBinding? = null
     private val binding get() = _binding!!
 
     interface NoticeDialogListener{
-        fun onDialogPositiveClick(dialog: DialogFragment, toDelete: Array<FactModel>?)
+        fun onDialogPositiveClick(dialog: DialogFragment, toDelete: Array<FactModel>?, category: String)
         fun onDialogNegativeClick(dialog: DialogFragment)
     }
 
@@ -43,6 +42,7 @@ class DeleteFactFragment : DialogFragment() {
             toDelete = it.getParcelableArray("parcelable_array_key")?.map {
                 it as FactModel
             }?.toTypedArray()
+            categoryName = it.getString("category_name").toString()
         }
     }
 
@@ -75,7 +75,7 @@ class DeleteFactFragment : DialogFragment() {
                 .setPositiveButton("Delete Facts",
                     DialogInterface.OnClickListener { dialog, id ->
                         // Sign in the user.
-                        listener.onDialogPositiveClick(this, toDelete)
+                        listener.onDialogPositiveClick(this, toDelete, categoryName)
 //                       Timber.e("Submit Clicked, Fact Name: ${binding.etFactName.text} Cat Name: ${binding.etCategoryName.text}")
 
                     })
@@ -107,10 +107,11 @@ class DeleteFactFragment : DialogFragment() {
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: Array<FactModel>) =
+        fun newInstance(param1: Array<FactModel>, param2: String) =
             DeleteFactFragment().apply {
                 arguments = Bundle().apply {
                     putParcelableArray("parcelable_array_key", param1)
+                    putString("category_name", param2)
                 }
             }
     }

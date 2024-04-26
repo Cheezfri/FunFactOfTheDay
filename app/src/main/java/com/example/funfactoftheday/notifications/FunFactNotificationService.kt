@@ -38,8 +38,8 @@ class FunFactNotificationService(
         val notification = NotificationCompat.Builder(context, Fun_Fact_Channel_ID)
             .setSmallIcon(R.drawable.custom_checkbox_heart)
             .setContentTitle("Fun Fact of the Day!")
-            .setContentText(factName)
             .setContentIntent(activityPendingIntent)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(factName))
             .addAction(
                 R.drawable.custom_checkbox_heart,
                 "Get another Fun Fact?",

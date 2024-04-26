@@ -8,6 +8,7 @@ import com.example.funfactoftheday.database.models.FactModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class CategoryViewModel(private val appRepository: AppRepository): ViewModel() {
 
@@ -19,6 +20,19 @@ class CategoryViewModel(private val appRepository: AppRepository): ViewModel() {
     fun insertFact(factModel: FactModel) = viewModelScope.launch{
             appRepository.insertFact(factModel)
         }
+
+    suspend fun toggleDeletable(){
+        Timber.e("toggleDelete in ViewModel")
+        appRepository.toggleDeletable()
+    }
+
+    suspend fun returnDeletable(): Boolean = viewModelScope.async {
+        return@async appRepository.returnDeletable()
+    }.await()
+
+    suspend fun deleteFact(factName: String){
+        appRepository.deleteFact(factName)
+    }
 
 //    fun searchFactDatabase(searchQuery:String): LiveData<List<FactModel>>{
 //        return appRepository.searchFactDatabase(searchQuery).asLiveData()

@@ -1,7 +1,6 @@
 package com.example.funfactoftheday.homepage
 
 import android.os.Bundle
-import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,17 +9,14 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.funfactoftheday.*
 import com.example.funfactoftheday.database.models.FactModel
-import com.example.funfactoftheday.database.models.toParcelableArray
 import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentHomePageBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -58,11 +54,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         return true
     }
 
-    /*
-    search "dog"
-    fav a few
-    click x in text search box. prob fixed this one
-     */
     private fun searchFactDatabase(query: String){
         homePageViewModel.viewModelScope.launch {
             val isDeletable = homePageViewModel.returnDeletable()
@@ -102,7 +93,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         } else{
             factsToDelete.add(fact)
         }
-
     }
 
     override fun onTextHold(itemBinding: FactBinding) {
@@ -185,7 +175,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
             }
             onQueryTextChange(binding.searchViewFacts.query.toString())
         }
-        //TODO: Onquerytextchange causes problem with switching layouts, prob beczause
+
         binding.searchViewFacts.setOnQueryTextListener(this)
 //        binding.searchViewFacts.isSubmitButtonEnabled = true
 
@@ -202,7 +192,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
                         val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
                         homePageViewModel.insertFact(factToInsert)
                     }
-
                 }
                 factsToFavorite.removeAll(factsToFavorite)
         }
@@ -211,11 +200,10 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         }
 
         binding.btnDeleteFact.setOnClickListener{
-
-            val bundle = Bundle()
-
-//            bundle.putParcelableArray("factsToDelete", factsToDelete.toParcelableArray())
-            val fragment = DeleteFactFragment.newInstance(factsToDelete.toTypedArray())
+            val fragment = DeleteFactFragment.newInstance(
+                factsToDelete.toTypedArray(),
+                "69"
+            )
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
         }
 

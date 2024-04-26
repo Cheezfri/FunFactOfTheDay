@@ -5,7 +5,10 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResult
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.map
@@ -14,6 +17,9 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.example.funfactoftheday.categories.CategoriesFragmentDirections
+import com.example.funfactoftheday.category.CategoryFragment
+import com.example.funfactoftheday.category.CategoryFragmentDirections
 import com.example.funfactoftheday.database.AppDatabase
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
@@ -68,14 +74,22 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         }
     }
 
-    override fun onDialogPositiveClick(dialog: DialogFragment, toDelete: Array<FactModel>?) {
+    override fun onDialogPositiveClick(dialog: DialogFragment, toDelete: Array<FactModel>?, categoryName: String) {
         viewModel.viewModelScope.launch {
             if (toDelete != null) {
                 for(fact in toDelete){
                     viewModel.deleteFact(fact.factName)
                 }
             }
-            findNavController(R.id.fragmentContainer).navigate(R.id.homePageFragment)
+            Timber.e("category: $categoryName")
+            if(categoryName != "69"){
+                val categoryModel = CategoryModel(categoryName)
+                val bundle = Bundle()
+                bundle.putParcelable("categoryModel", categoryModel)
+                findNavController(R.id.fragmentContainer).navigate(CategoryFragmentDirections.actionCategoryFragmentSelf(categoryModel))
+            } else {
+                findNavController(R.id.fragmentContainer).navigate(R.id.homePageFragment)
+            }
         }
     }
 
@@ -96,7 +110,6 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         val navController = navHostFragment.navController
 
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
-
         binding.bottomNavigationView.setOnItemSelectedListener{
             NavigationUI.onNavDestinationSelected(it, navController)
             navController.popBackStack(it.itemId, inclusive = false)

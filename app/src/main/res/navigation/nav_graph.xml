@@ -14,7 +14,11 @@
         android:id="@+id/categoriesFragment"
         android:name="com.example.funfactoftheday.categories.CategoriesFragment"
         android:label="fragment_categories"
-        tools:layout="@layout/fragment_categories" />
+        tools:layout="@layout/fragment_categories" >
+        <action
+            android:id="@+id/action_categoriesFragment_to_categoryFragment"
+            app:destination="@id/categoryFragment" />
+    </fragment>
     <fragment
         android:id="@+id/favoriteFactsFragment"
         android:name="com.example.funfactoftheday.favoritefacts.FavoriteFactsFragment"
@@ -29,7 +33,14 @@
         android:id="@+id/categoryFragment"
         android:name="com.example.funfactoftheday.category.CategoryFragment"
         android:label="fragment_category"
-        tools:layout="@layout/fragment_category"/>
+        tools:layout="@layout/fragment_category">
+        <argument
+            android:name="categoryModel"
+            app:argType="com.example.funfactoftheday.database.models.CategoryModel" />
+        <action
+            android:id="@+id/action_categoryFragment_self"
+            app:destination="@id/categoryFragment" />
+    </fragment>
     <fragment
         android:id="@+id/deleteFactsFragment"
         android:name="com.example.funfactoftheday.deletepage.DeleteFactsFragment"
