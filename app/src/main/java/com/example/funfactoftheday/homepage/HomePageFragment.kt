@@ -196,6 +196,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         }
             val fragment = AddAFactAndCategoryFragment()
             fragment.show((activity as AppCompatActivity).supportFragmentManager, "showPopUp")
+
         }
 
         binding.btnDeleteFact.setOnClickListener{

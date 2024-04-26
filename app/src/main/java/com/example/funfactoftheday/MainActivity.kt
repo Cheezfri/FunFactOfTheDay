@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.TextUtils
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
@@ -41,29 +43,44 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
 
     override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddAFactAndCategoryBinding) {
         // User taps the dialog's positive button.
-//        viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
-
-    viewModel.viewModelScope.launch {
-        viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavoriteCategory.isChecked))
-        viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
-        viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
-        }
+        val factText = binding.etFactName.text.toString().trim()
+        val categoryText = binding.etCategoryName.text.toString().trim()
+        if(factText.isEmpty()){
+            Toast.makeText(this, "Error: Fact Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
+        } else
+            if(categoryText.isEmpty()){
+                Toast.makeText(this, "Error: Category Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
+            } else{
+                viewModel.viewModelScope.launch {
+                    viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavoriteCategory.isChecked))
+                    viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
+                    viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
+                }
+            }
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddACategoryBinding) {
         // User taps the dialog's positive button.
-        viewModel.viewModelScope.launch {
-            viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavorite.isChecked))
-//            Timber.e("From Main Act:Category: ${binding.etCategoryName.text} ${binding.cbFavorite.isChecked}")
+        val categoryText = binding.etCategoryName.text.toString().trim()
+        if(categoryText.isEmpty()){
+            Toast.makeText(this, "Error: Category Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
+        } else {
+            viewModel.viewModelScope.launch {
+                viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavorite.isChecked))
+            }
         }
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddAFactBinding, category: String) {
         // User taps the dialog's positive button.
-        viewModel.viewModelScope.launch {
-            viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
-            viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), category)
-//            Timber.e("From Main Act:Category: ${binding.etFactName.text} ${binding.cbFavoriteFact.isChecked}")
+        val factText = binding.etFactName.text.toString().trim()
+        if(factText.isEmpty()){
+            Toast.makeText(this, "Error: Fact Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
+        } else {
+            viewModel.viewModelScope.launch {
+                viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
+                viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), category)
+            }
         }
     }
 

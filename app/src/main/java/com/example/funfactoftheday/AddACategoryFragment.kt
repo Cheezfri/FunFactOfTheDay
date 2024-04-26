@@ -96,6 +96,14 @@ class AddACategoryFragment : DialogFragment(){
         return inflater.inflate(R.layout.fragment_add_a_category, container, false)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val categoryText = binding.etCategoryName.text.toString().trim()
+        if(categoryText.isEmpty()){
+            binding.etCategoryName.error = "Please Enter a Category!"
+        }
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
@@ -114,4 +122,5 @@ class AddACategoryFragment : DialogFragment(){
                 }
             }
     }
+
 }

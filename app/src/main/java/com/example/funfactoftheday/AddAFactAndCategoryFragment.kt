@@ -76,7 +76,6 @@ class AddAFactAndCategoryFragment : DialogFragment() {
                         // Sign in the user.
                         listener.onDialogPositiveClick(this, binding)
 //                       Timber.e("Submit Clicked, Fact Name: ${binding.etFactName.text} Cat Name: ${binding.etCategoryName.text}")
-
                     })
                 .setNegativeButton("Cancel",
                     DialogInterface.OnClickListener { dialog, id ->
@@ -94,6 +93,18 @@ class AddAFactAndCategoryFragment : DialogFragment() {
         // Inflate the layout for this fragment
 //        binding = FragmentAddAFactBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val factText = binding.etFactName.text.toString().trim()
+        val categoryText = binding.etCategoryName.text.toString().trim()
+        if(factText.isEmpty()){
+            binding.etFactName.error = "Please Enter a Fact!"
+        }
+        if(categoryText.isEmpty()){
+            binding.etCategoryName.error = "Please Enter a Category!"
+        }
     }
 
     companion object {

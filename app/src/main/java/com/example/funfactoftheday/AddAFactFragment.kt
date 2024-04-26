@@ -105,6 +105,14 @@ class AddAFactFragment : DialogFragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val factText = binding.etFactName.text.toString().trim()
+        if(factText.isEmpty()){
+            binding.etFactName.error = "Please Enter a Fact!"
+        }
+    }
+
     companion object {
         /**
          * Use this factory method to create a new instance of
