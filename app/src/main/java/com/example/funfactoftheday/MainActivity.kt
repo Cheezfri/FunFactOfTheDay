@@ -1,6 +1,7 @@
 package com.example.funfactoftheday
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.text.TextUtils
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.setFragmentResult
@@ -117,10 +119,19 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen().apply {
+            setKeepOnScreenCondition{
+                !viewModel.isReady.value
+            }
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
+//        val sharedPref = getSharedPreferences("Onboard", MODE_PRIVATE).apply {
+//            if(!getBoolean("Onboard", false)){
+//                startActivity(Intent(applicationContext, OnBoardingActivity::class.java))
+//            }
+//        }
 
         setSupportActionBar(binding.myToolbar)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment

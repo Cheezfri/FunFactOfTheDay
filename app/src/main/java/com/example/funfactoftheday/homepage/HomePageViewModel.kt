@@ -8,6 +8,9 @@ import com.example.funfactoftheday.database.models.FactModel
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.Timer
@@ -15,7 +18,19 @@ import java.util.Timer
 @Keep
 class HomePageViewModel (private val appRepository: AppRepository): ViewModel() {
 
+    private val _isReady = MutableStateFlow(false)
+    val isReady = _isReady.asStateFlow()
     val allFacts:LiveData<List<FactModel>> = appRepository.allFacts.asLiveData()
+
+    init {
+        viewModelScope.launch {
+            //R should be API level 30
+            if(android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.R){
+                delay(1000)
+            }
+            _isReady.value = true
+        }
+    }
 
     fun insertFact(factModel: FactModel) = viewModelScope.launch {
         appRepository.insertFact(factModel)

@@ -11,9 +11,10 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:elevation="4dp"
-        android:theme="@style/AppTheme"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+<!--    android:theme="@style/AppTheme"-->
 <!--    android:background="?attr/colorPrimary"-->
 <!--    android:theme="@style/ThemeOverlay.AppCompat.ActionBar"-->
 <!--    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
@@ -42,10 +43,10 @@
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/bottom_navigation_menu"/>
+<!--    android:theme="@style/AppTheme"-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
