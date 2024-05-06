@@ -158,6 +158,9 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         super.onViewCreated(view, savedInstanceState)
         Timber.plant(Timber.DebugTree())
 
+        val activity = requireActivity() as AppCompatActivity
+        activity.supportActionBar?.title = "All Facts"
+
         adapter = FactsAdapter(this)
         adapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 

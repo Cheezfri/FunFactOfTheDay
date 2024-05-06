@@ -171,6 +171,9 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         binding.rvFactsCategoryFragment.setItemViewCacheSize(10000)
         val categoryModel = args.categoryModel
 
+        val activity = requireActivity() as AppCompatActivity
+        activity.supportActionBar?.title = "Facts about ${categoryModel.categoryName}"
+
         categoryViewModel.viewModelScope.launch{
             categoryViewModel.getFactsOfCategories(categoryModel!!).observe(viewLifecycleOwner){ items ->
                 items.let { itt ->

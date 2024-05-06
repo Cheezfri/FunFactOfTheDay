@@ -12,6 +12,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
 import com.example.funfactoftheday.DataBinderMapperImpl
@@ -88,6 +89,9 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.e("onViewCreated")
+
+        val activity = requireActivity() as AppCompatActivity
+        activity.supportActionBar?.title = "Settings"
 
 //        val service = FunFactNotificationService(requireContext())
 //        binding.button.setOnClickListener {

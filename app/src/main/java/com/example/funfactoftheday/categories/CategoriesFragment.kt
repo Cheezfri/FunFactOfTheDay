@@ -134,6 +134,9 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val activity = requireActivity() as AppCompatActivity
+        activity.supportActionBar?.title = "All Categories"
+
         adapter = CategoryAdapter(this, this)
         binding.rvCategoriesPage.adapter = adapter
         binding.rvCategoriesPage.layoutManager = LinearLayoutManager(requireContext())
