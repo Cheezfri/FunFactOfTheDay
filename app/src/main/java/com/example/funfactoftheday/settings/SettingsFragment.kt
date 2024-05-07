@@ -1,9 +1,17 @@
 package com.example.funfactoftheday.settings
 
+import android.Manifest
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.app.Activity
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +19,11 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.viewModelScope
 import com.example.funfactoftheday.DataBinderMapperImpl
@@ -23,6 +34,7 @@ import com.example.funfactoftheday.databinding.FragmentSettingsBinding
 import com.example.funfactoftheday.notifications.AlarmItem
 import com.example.funfactoftheday.notifications.AndroidAlarmScheduler
 import com.example.funfactoftheday.notifications.FunFactNotificationService
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalDateTime
@@ -38,15 +50,50 @@ private const val ARG_PARAM2 = "param2"
  */
 class SettingsFragment : Fragment() {
 
-    //TODO: Spinner needs to remember its position, sharedpref prob,
-    // needs to see notifications fully. gets cuttoff
-
     private var param1: String? = null
     private var param2: String? = null
     private lateinit var  binding:FragmentSettingsBinding
 
     private val settingsPageViewModel:SettingsPageViewModel by viewModels {
         SettingsPageViewModel.SettingsPageViewModelFactory((context?.applicationContext as FactApplication).repository)
+    }
+
+    private val permissionLauncherSingle = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ){ isGranted->
+        Timber.e("isGranted: $isGranted")
+        if(!isGranted) {
+            if(ContextCompat.checkSelfPermission(requireContext(), POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED){
+                if(!ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), POST_NOTIFICATIONS)){
+                    Timber.e("Permission Permanently denied")
+                    //Navigate to some shit
+                    openAppSettings()
+                }
+            } else {
+                Toast.makeText(requireContext(), "Permission Denied: Cannot Send Fun Facts", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun Fragment.openAppSettings(){
+        val builder: AlertDialog.Builder = AlertDialog.Builder(context)
+        builder
+            .setMessage("Please click confirm and allow notifications.")
+            .setTitle("Notifications are disabled")
+            .setPositiveButton("Confirm"){ _, _ ->
+                activity?.run{
+                    Intent(
+                        Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                        Uri.fromParts("package", packageName, null)
+                    ).also(::startActivity)
+                }
+            }
+            .setNegativeButton("Cancel"){_,_->
+                Toast.makeText(requireContext(), "Permission Denied: Cannot Send Fun Facts", Toast.LENGTH_LONG).show()
+            }
+            .setCancelable(true)
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,7 +132,6 @@ class SettingsFragment : Fragment() {
             }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.e("onViewCreated")
@@ -140,8 +186,11 @@ class SettingsFragment : Fragment() {
             }
         }
 
-
         binding.switchEnableNotifications.setOnClickListener{
+            if(binding.switchEnableNotifications.isChecked){
+                permissionLauncherSingle.launch(POST_NOTIFICATIONS)
+
+            }
             if(binding.switchEnableNotifications.isChecked &&
                 (binding.spinnerWhatKindFunFactsSend.selectedItem.toString() == "Favorite Facts Only") &&
                 isFavoriteFactsEmpty){
