@@ -120,7 +120,7 @@ runBlocking {
             notificationManager.cancel(1000)
 
             val service = FunFactNotificationService(context)
-            service.showNotification("Test Fact $fact")
+            service.showNotification("$fact")
         }
 
     }

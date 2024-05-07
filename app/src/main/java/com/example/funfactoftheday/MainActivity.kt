@@ -151,16 +151,20 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         val sharedPref = getSharedPreferences("FactsSharedPreferences", MODE_PRIVATE)
         val editor = sharedPref.edit()
         val testSet:HashSet<String> = HashSet()
+        val currentFacts = sharedPref.getStringSet("TestStringSet", HashSet<String>())
 
-        viewModel.allFacts.observe(this){ facts ->
-            if(facts.isNotEmpty()){
-                for(fact in facts){
-                    testSet.add(fact.factName)
+        if(currentFacts.isNullOrEmpty()){
+            viewModel.allFacts.observe(this){ facts ->
+                if(facts.isNotEmpty()){
+                    for(fact in facts){
+                        testSet.add(fact.factName)
+                    }
                 }
-            }
-            editor.apply{
-                putStringSet("TestStringSet", testSet)
-                apply()
+                editor.apply{
+                    putStringSet("TestStringSet", testSet)
+                    apply()
+                    Timber.e("Added all facts")
+                }
             }
         }
     }

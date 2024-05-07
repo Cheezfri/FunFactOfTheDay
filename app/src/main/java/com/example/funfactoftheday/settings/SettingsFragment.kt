@@ -252,7 +252,10 @@ class SettingsFragment : Fragment() {
         val whatKind = binding.spinnerWhatKindFunFactsSend.selectedItem.toString()
         val enabled = binding.switchEnableNotifications.isChecked
         var alarmItem: AlarmItem? = null
-        val sharedPref = requireContext().getSharedPreferences("SettingsSpinnerSharedPreferences", Context.MODE_PRIVATE)
+        val factsSharedPreferences = requireContext().getSharedPreferences("FactsSharedPreferences",
+            AppCompatActivity.MODE_PRIVATE
+        )
+        val editor = factsSharedPreferences.edit()
 
         val interval = when (howOften){
             "Twice A Day" -> AlarmManager.INTERVAL_HALF_DAY
@@ -277,6 +280,11 @@ class SettingsFragment : Fragment() {
                             time = LocalDateTime.now().plusSeconds(5.toLong()),
                             messages = transformedFacts.toTypedArray())
                         alarmItem?.let(scheduler::schedule)
+                        editor.apply{
+                            putStringSet("TestStringSet", transformedFacts.toSet())
+                            apply()
+                            Timber.e("Added all facts")
+                        }
                     }
                 }
             }
@@ -294,6 +302,11 @@ class SettingsFragment : Fragment() {
                             time = LocalDateTime.now().plusSeconds(5.toLong()),
                             messages = transformedFacts.toTypedArray())
                         alarmItem?.let(scheduler::schedule)
+                        editor.apply{
+                            putStringSet("TestStringSet", transformedFacts.toSet())
+                            apply()
+                            Timber.e("Added Favorite Facts only")
+                        }
                     }
                 }
             }
@@ -321,18 +334,16 @@ class SettingsFragment : Fragment() {
                                 time = LocalDateTime.now().plusSeconds(5.toLong()),
                                 messages = transformedFacts.toTypedArray())
                             alarmItem?.let(scheduler::schedule)
+                            editor.apply{
+                                putStringSet("TestStringSet", transformedFacts.toSet())
+                                apply()
+                                Timber.e("Added Favorite Categories only")
+                            }
                         }
                     }
                 }
             }
         }
-
-
-//        editor.apply{
-//            putBoolean("enable_notifications", binding.switchEnableNotifications.isChecked)
-//            putInt("what_kind", binding.spinnerWhatKindFunFactsSend.selectedItemPosition)
-//            putInt("how_often", binding.spinnerHowOftenNotifications.selectedItemPosition)
-//        }
     }
 
 }
