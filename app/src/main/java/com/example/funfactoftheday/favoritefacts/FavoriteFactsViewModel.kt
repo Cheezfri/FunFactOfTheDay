@@ -5,6 +5,7 @@ import androidx.lifecycle.*
 import com.example.funfactoftheday.database.AppRepository
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.homepage.HomePageViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -13,6 +14,14 @@ class FavoriteFactsViewModel (private val appRepository: AppRepository): ViewMod
 
     val allFacts:LiveData<List<FactModel>> = appRepository.allFacts.asLiveData()
     val favoriteFacts:LiveData<List<FactModel>> = appRepository.favoriteFacts.asLiveData()
+
+    suspend fun toggleDeletable(){
+        appRepository.toggleDeletable()
+    }
+
+    suspend fun returnDeletable(): Boolean = viewModelScope.async {
+        return@async appRepository.returnDeletable()
+    }.await()
 
     fun insertFact(factModel: FactModel) = viewModelScope.launch {
         appRepository.insertFact(factModel)

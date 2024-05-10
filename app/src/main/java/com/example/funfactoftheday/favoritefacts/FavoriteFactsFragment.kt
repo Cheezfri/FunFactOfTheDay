@@ -16,6 +16,8 @@ import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.FactBinding
 import com.example.funfactoftheday.databinding.FragmentFavoriteFactsBinding
 import com.example.funfactoftheday.homepage.HomePageViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -159,6 +161,12 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
         super.onResume()
         if(binding.searchViewFacts.query.toString().isEmpty()){
             onQueryTextSubmit("")
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            if(favoriteFactsViewModel.returnDeletable()){
+                favoriteFactsViewModel.toggleDeletable()
+            }
+
         }
     }
 

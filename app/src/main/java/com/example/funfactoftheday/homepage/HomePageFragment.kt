@@ -72,7 +72,6 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
         val searchQuery = "%$query%"
         homePageViewModel.searchFactDatabase(searchQuery).observe(this) { list ->
                 list.sortedBy { !it.isFavorite }.let {
-                    Timber.e("searchQuery is $searchQuery")
                     adapter.submitList(it)
             }
         }

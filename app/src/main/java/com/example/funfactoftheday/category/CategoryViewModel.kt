@@ -22,7 +22,6 @@ class CategoryViewModel(private val appRepository: AppRepository): ViewModel() {
         }
 
     suspend fun toggleDeletable(){
-        Timber.e("toggleDelete in ViewModel")
         appRepository.toggleDeletable()
     }
 

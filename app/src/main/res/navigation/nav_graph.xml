@@ -46,4 +46,13 @@
         android:name="com.example.funfactoftheday.deletepage.DeleteFactsFragment"
         android:label="fragment_delete_facts"
         tools:layout="@layout/fragment_delete_facts"/>
+    <fragment
+        android:id="@+id/onboardingFragment"
+        android:name="com.example.funfactoftheday.onboarding.OnboardingFragment"
+        android:label="fragment_onboarding"
+        tools:layout="@layout/fragment_onboarding" >
+        <action
+            android:id="@+id/action_onboardingFragment_to_homePageFragment"
+            app:destination="@id/homePageFragment" />
+    </fragment>
 </navigation>

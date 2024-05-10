@@ -29,6 +29,7 @@ import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.*
 import com.example.funfactoftheday.homepage.HomePageViewModel
+import com.example.funfactoftheday.onboarding.OnboardingFragment
 import com.google.android.material.color.DynamicColors
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -127,16 +128,15 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-//        val sharedPref = getSharedPreferences("Onboard", MODE_PRIVATE).apply {
-//            if(!getBoolean("Onboard", false)){
-//                startActivity(Intent(applicationContext, OnBoardingActivity::class.java))
-//            }
-//        }
-
-        setSupportActionBar(binding.myToolbar)
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
 
+        val sharedPref = getSharedPreferences("Onboard", MODE_PRIVATE).apply {
+            if(!getBoolean("Onboard", false)){
+                navController.navigate(R.id.onboardingFragment)
+            }
+        }
+        setSupportActionBar(binding.myToolbar)
         NavigationUI.setupWithNavController(binding.bottomNavigationView, navController)
         binding.bottomNavigationView.setOnItemSelectedListener{
             NavigationUI.onNavDestinationSelected(it, navController)
