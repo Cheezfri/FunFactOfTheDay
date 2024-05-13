@@ -162,12 +162,11 @@ class FavoriteFactsFragment : Fragment(), FactsAdapter.OnItemClickListener, Sear
         if(binding.searchViewFacts.query.toString().isEmpty()){
             onQueryTextSubmit("")
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            if(favoriteFactsViewModel.returnDeletable()){
-                favoriteFactsViewModel.toggleDeletable()
-            }
-
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            if(favoriteFactsViewModel.returnDeletable()){
+//                favoriteFactsViewModel.toggleDeletable()
+//            }
+//        }
     }
 
     override fun onPause() {

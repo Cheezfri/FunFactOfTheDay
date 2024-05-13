@@ -106,8 +106,6 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
     }
 
     override fun onTextHold(itemBinding: FactBinding) {
-        Timber.e("onTextHold Working")
-
         CoroutineScope(Dispatchers.IO).launch {
             categoryViewModel.toggleDeletable()
             categoryViewModel.viewModelScope.launch {
@@ -231,41 +229,49 @@ class CategoryFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
 
     override fun onResume() {
         super.onResume()
-        CoroutineScope(Dispatchers.IO).launch {
-            if(categoryViewModel.returnDeletable()){
-                categoryViewModel.toggleDeletable()
-            }
-            categoryViewModel.viewModelScope.launch {
-                if(categoryViewModel.returnDeletable()){
-                    binding.btnGenerateFunFact.visibility = View.INVISIBLE
-                    binding.btnDeleteFact.visibility = View.VISIBLE
-                } else{
-                    binding.btnGenerateFunFact.visibility = View.VISIBLE
-                    binding.btnDeleteFact.visibility = View.INVISIBLE
-                }
-            }
-        }
+//        CoroutineScope(Dispatchers.IO).launch {
+//            if(categoryViewModel.returnDeletable()){
+//                categoryViewModel.toggleDeletable()
+//            }
+//            categoryViewModel.viewModelScope.launch {
+//                if(categoryViewModel.returnDeletable()){
+//                    binding.btnGenerateFunFact.visibility = View.INVISIBLE
+//                    binding.btnDeleteFact.visibility = View.VISIBLE
+//                } else{
+//                    binding.btnGenerateFunFact.visibility = View.VISIBLE
+//                    binding.btnDeleteFact.visibility = View.INVISIBLE
+//                }
+//            }
+//        }
     }
 
     override fun onPause() {
         super.onPause()
-        categoryViewModel.viewModelScope.launch {
-            val isDeletable = categoryViewModel.returnDeletable()
-            for(fact in factsToFavorite){
-                if(isDeletable){
-                    val factToInsert = FactModel(fact.factName, fact.isFavorite, true)
-                    categoryViewModel.insertFact(factToInsert)
-//                    binding.btnGenerateFunFact.visibility = View.INVISIBLE
-//                    binding.btnDeleteFact.visibility = View.VISIBLE
-                } else{
+        CoroutineScope(Dispatchers.IO).launch{
+            if(categoryViewModel.returnDeletable()){
+                categoryViewModel.toggleDeletable()
+            }
+            categoryViewModel.viewModelScope.launch {
+                for(fact in factsToFavorite){
                     val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
                     categoryViewModel.insertFact(factToInsert)
-//                    binding.btnGenerateFunFact.visibility = View.VISIBLE
-//                    binding.btnDeleteFact.visibility = View.INVISIBLE
                 }
+                factsToFavorite.removeAll(factsToFavorite)
             }
-            factsToFavorite.removeAll(factsToFavorite)
         }
+//        categoryViewModel.viewModelScope.launch {
+//            val isDeletable = categoryViewModel.returnDeletable()
+//            for(fact in factsToFavorite){
+//                if(isDeletable){
+//                    val factToInsert = FactModel(fact.factName, fact.isFavorite, true)
+//                    categoryViewModel.insertFact(factToInsert)
+//                } else{
+//                    val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
+//                    categoryViewModel.insertFact(factToInsert)
+//                }
+//            }
+//            factsToFavorite.removeAll(factsToFavorite)
+//        }
     }
 
 }

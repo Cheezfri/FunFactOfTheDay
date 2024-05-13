@@ -40,11 +40,13 @@ class CategoryAdapter (
 
     class CategoriesComparator : DiffUtil.ItemCallback<CategoryModel>(){
         override fun areItemsTheSame(oldItem: CategoryModel, newItem: CategoryModel): Boolean {
-            return oldItem === newItem
+            return (oldItem.categoryName == newItem.categoryName &&
+                    oldItem.isFavorite == newItem.isFavorite)
         }
 
         override fun areContentsTheSame(oldItem: CategoryModel, newItem: CategoryModel): Boolean {
-            return (oldItem.categoryName == newItem.categoryName && oldItem.isFavorite == newItem.isFavorite)
+            return (oldItem.categoryName == newItem.categoryName &&
+                    oldItem.isFavorite == newItem.isFavorite)
         }
     }
 

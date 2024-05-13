@@ -174,7 +174,7 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
                     adapter.submitList(it as MutableList<FactModel>?)
                 }
             }
-            onQueryTextChange(binding.searchViewFacts.query.toString())
+//            onQueryTextChange(binding.searchViewFacts.query.toString())
         }
 
         binding.searchViewFacts.setOnQueryTextListener(this)
@@ -234,23 +234,33 @@ class HomePageFragment : Fragment(), FactsAdapter.OnItemClickListener, SearchVie
 
     override fun onPause() {
         super.onPause()
+        CoroutineScope(Dispatchers.IO).launch {
+            if (homePageViewModel.returnDeletable()) {
+                homePageViewModel.toggleDeletable()
+            }
+        }
         homePageViewModel.viewModelScope.launch {
+            for(fact in factsToFavorite){
+                val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
+                homePageViewModel.insertFact(factToInsert)
+            }
+            factsToFavorite.removeAll(factsToFavorite)
+        }
+    /*
+            homePageViewModel.viewModelScope.launch {
             val isDeletable = homePageViewModel.returnDeletable()
             for(fact in factsToFavorite){
                 if(isDeletable){
                     val factToInsert = FactModel(fact.factName, fact.isFavorite, true)
                     homePageViewModel.insertFact(factToInsert)
-//                    binding.btnGenerateFunFact.visibility = View.INVISIBLE
-//                    binding.btnDeleteFact.visibility = View.VISIBLE
                 } else{
                     val factToInsert = FactModel(fact.factName, fact.isFavorite, false)
                     homePageViewModel.insertFact(factToInsert)
-//                    binding.btnGenerateFunFact.visibility = View.VISIBLE
-//                    binding.btnDeleteFact.visibility = View.INVISIBLE
                 }
             }
             factsToFavorite.removeAll(factsToFavorite)
         }
+     */
     }
 
 }

@@ -78,7 +78,9 @@ class FactsAdapter(
 
     class FactsComparator : DiffUtil.ItemCallback<FactModel>(){
         override fun areItemsTheSame(oldItem: FactModel, newItem: FactModel): Boolean {
-            return oldItem === newItem
+            return (oldItem.factName == newItem.factName &&
+                    oldItem.isFavorite == newItem.isFavorite &&
+                    oldItem.isDeletable == newItem.isDeletable)
         }
 
         override fun areContentsTheSame(oldItem: FactModel, newItem: FactModel): Boolean {

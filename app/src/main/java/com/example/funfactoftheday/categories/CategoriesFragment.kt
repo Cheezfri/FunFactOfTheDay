@@ -148,7 +148,7 @@ class CategoriesFragment : Fragment(), CategoryAdapter.OnItemClickListener, Sear
                     adapter.submitList(it as MutableList<CategoryModel>?)
                 }
             }
-            onQueryTextChange(binding.searchViewCategories.query.toString())
+//            onQueryTextChange(binding.searchViewCategories.query.toString())
         }
 
         binding.searchViewCategories.setOnQueryTextListener(this)
