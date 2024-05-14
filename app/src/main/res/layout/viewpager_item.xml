@@ -28,29 +28,10 @@
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="250dp"
-                    android:id="@+id/ivimage"
-                    android:scaleType="centerCrop" />
-
-
-                <TextView
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/tvHeading"
-                    android:layout_below="@id/ivimage"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="16dp"
-                    android:text="Baked"
-                    android:textSize="26dp"
-                    android:textStyle="bold"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/tvDesc"
-                    android:layout_below="@id/tvHeading"
-                    android:layout_margin="8dp"
-                    android:text="wowwwwwwww"/>
+                    android:id="@+id/ivImage"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/page1"/>
 
             </RelativeLayout>
 

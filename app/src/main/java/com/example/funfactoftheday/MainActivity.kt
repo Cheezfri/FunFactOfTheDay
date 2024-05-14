@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.TextUtils
+import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.os.bundleOf
@@ -130,6 +131,13 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragmentContainer) as NavHostFragment
         val navController = navHostFragment.navController
+
+        navController.addOnDestinationChangedListener{_, destination,_ ->
+            when(destination.id){
+                R.id.onboardingFragment -> binding.bottomNavigationView.visibility = View.GONE
+                else -> binding.bottomNavigationView.visibility = View.VISIBLE
+            }
+        }
 
         val sharedPref = getSharedPreferences("Onboard", MODE_PRIVATE).apply {
             if(!getBoolean("Onboard", false)){
