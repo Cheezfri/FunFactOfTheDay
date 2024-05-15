@@ -1,38 +1,21 @@
 package com.example.funfactoftheday
 
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.core.os.bundleOf
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResult
-import androidx.lifecycle.asLiveData
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.example.funfactoftheday.categories.CategoriesFragmentDirections
-import com.example.funfactoftheday.category.CategoryFragment
 import com.example.funfactoftheday.category.CategoryFragmentDirections
-import com.example.funfactoftheday.database.AppDatabase
 import com.example.funfactoftheday.database.models.CategoryModel
 import com.example.funfactoftheday.database.models.FactModel
 import com.example.funfactoftheday.databinding.*
 import com.example.funfactoftheday.homepage.HomePageViewModel
-import com.example.funfactoftheday.onboarding.OnboardingFragment
-import com.google.android.material.color.DynamicColors
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -40,51 +23,92 @@ class MainActivity : AppCompatActivity(), AddAFactAndCategoryFragment.NoticeDial
 
     private lateinit var binding: ActivityMainBinding
 
-
     private val viewModel:HomePageViewModel by viewModels{
         HomePageViewModel.HomePageViewModelFactory((this.applicationContext as FactApplication).repository)
     }
 
+    private fun makeStringOneSpaceBetweenWordsEndWithPeriod(input: String): String {
+        // Split the input by one or more spaces
+        var fact = input.trim()
+        if(!fact.endsWith(".")){
+            fact = "$fact."
+        }
+        // Split the input by spaces and filter out any empty parts
+        val parts = fact.split(" ").filter { it.isNotEmpty() }
+        // Join the filtered parts with a single space
+        val rejoinedString = parts.joinToString(" ")
+        // Capitalize the first word
+        return rejoinedString.replaceFirstChar { it.uppercase() }
+    }
+
+    private fun makeStringOneSpaceBetweenWordsAndCapitalize(input: String): String {
+        // Split the input by one or more spaces
+        val parts = input.trim().split("\\s+".toRegex())
+        // Capitalize each word
+        val capitalizedParts = parts.map { it.replaceFirstChar { itt -> itt.uppercaseChar() } }
+        // Join the parts with a single space
+        return capitalizedParts.joinToString(" ")
+    }
+
     override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddAFactAndCategoryBinding) {
         // User taps the dialog's positive button.
-        val factText = binding.etFactName.text.toString().trim()
-        val categoryText = binding.etCategoryName.text.toString().trim()
-        if(factText.isEmpty()){
-            Toast.makeText(this, "Error: Fact Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
-        } else
-            if(categoryText.isEmpty()){
-                Toast.makeText(this, "Error: Category Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
-            } else{
-                viewModel.viewModelScope.launch {
-                    viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavoriteCategory.isChecked))
-                    viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
-                    viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), binding.etCategoryName.text.toString())
-                }
+        viewModel.viewModelScope.launch {
+            val factText = makeStringOneSpaceBetweenWordsEndWithPeriod(binding.etFactName.text.toString())
+            val categoryText = makeStringOneSpaceBetweenWordsAndCapitalize(binding.etCategoryName.text.toString())
+            if(binding.etFactName.text.toString().trim().isEmpty()){
+                Toast.makeText(applicationContext, "Error: Fact Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
+                return@launch
             }
+            if(binding.etCategoryName.text.toString().trim().isEmpty()){
+                Toast.makeText(applicationContext, "Error: Category Text was Empty. No Category Added", Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            if(viewModel.doesFactExist(factText)){
+                Toast.makeText(applicationContext, "Error: Fact already exists. No Fact Added", Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            if(viewModel.doesCategoryExist(categoryText)){
+                Timber.e("The Category Exists: $categoryText")
+                Toast.makeText(applicationContext, "Error: Category already exists. No Fact Added", Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            viewModel.insertCategory(CategoryModel(categoryText, binding.cbFavoriteCategory.isChecked))
+            viewModel.insertFact(FactModel(factText, binding.cbFavoriteFact.isChecked))
+            viewModel.insertCategoryModelCrossRef(factText, categoryText)
+        }
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddACategoryBinding) {
         // User taps the dialog's positive button.
-        val categoryText = binding.etCategoryName.text.toString().trim()
-        if(categoryText.isEmpty()){
-            Toast.makeText(this, "Error: Category Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
-        } else {
-            viewModel.viewModelScope.launch {
-                viewModel.insertCategory(CategoryModel(binding.etCategoryName.text.toString(), binding.cbFavorite.isChecked))
+        viewModel.viewModelScope.launch {
+            var categoryText = makeStringOneSpaceBetweenWordsAndCapitalize(binding.etCategoryName.text.toString())
+            if(binding.etCategoryName.text.toString().trim().isEmpty()){
+                Toast.makeText(applicationContext, "Error: Category Text was Empty. No Category Added", Toast.LENGTH_LONG).show()
+                return@launch
             }
+            if(viewModel.doesCategoryExist(categoryText)){
+                Timber.e("The Category Exists: $categoryText")
+                Toast.makeText(applicationContext, "Error: Category already exists. No Fact Added", Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            viewModel.insertCategory(CategoryModel(categoryText, binding.cbFavorite.isChecked))
         }
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment, binding: FragmentAddAFactBinding, category: String) {
         // User taps the dialog's positive button.
-        val factText = binding.etFactName.text.toString().trim()
-        if(factText.isEmpty()){
-            Toast.makeText(this, "Error: Fact Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
-        } else {
-            viewModel.viewModelScope.launch {
-                viewModel.insertFact(FactModel(binding.etFactName.text.toString(), binding.cbFavoriteFact.isChecked))
-                viewModel.insertCategoryModelCrossRef(binding.etFactName.text.toString(), category)
+        viewModel.viewModelScope.launch {
+            var factText = makeStringOneSpaceBetweenWordsEndWithPeriod(binding.etFactName.text.toString())
+            if(binding.etFactName.text.toString().trim().isEmpty()){
+                Toast.makeText(applicationContext, "Error: Fact Text was Empty. No Fact Added", Toast.LENGTH_LONG).show()
+                return@launch
             }
+            if(viewModel.doesFactExist(factText)){
+                Toast.makeText(applicationContext, "Error: Fact already exists. No Fact Added", Toast.LENGTH_LONG).show()
+                return@launch
+            }
+            viewModel.insertFact(FactModel(factText, binding.cbFavoriteFact.isChecked))
+            viewModel.insertCategoryModelCrossRef(factText, category)
         }
     }
 

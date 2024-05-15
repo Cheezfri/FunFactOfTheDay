@@ -86,11 +86,11 @@ interface AppDao {
     fun getCategoriesOfFacts(factName: String): Flow<FactsWithCategories>
 
     @Transaction
-    @Query("SELECT EXISTS(SELECT * FROM category_table WHERE categoryName = :categoryName)")
+    @Query("SELECT EXISTS(SELECT * FROM category_table WHERE UPPER(categoryName) = UPPER(:categoryName))")
     fun doesCategoryExist(categoryName: String):Boolean
 
     @Transaction
-    @Query("SELECT EXISTS(SELECT * FROM fact_table WHERE factName = :factName)")
+    @Query("SELECT EXISTS(SELECT * FROM fact_table WHERE UPPER(factName) = UPPER(:factName))")
     fun doesFactExist(factName: String):Boolean
 
     @Query("SELECT * FROM fact_table WHERE factName LIKE :searchQuery")
